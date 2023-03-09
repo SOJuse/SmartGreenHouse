@@ -38,10 +38,10 @@ void receivedCallback( uint32_t from, String &msg ) {
   Serial.println(hum2);
   Serial.println(hum);
 
-  publishData();
+//  publishData();
 }
 void newConnectionCallback(uint32_t nodeId) {
-  Serial.printf("New Connection, nodeId = %u\n", nodeId);
+  Serial.printf("New Connection at gate, nodeId = %u\n", nodeId);
 }
 
 void disconnecting_mesh() {

@@ -1,6 +1,6 @@
 //запускается при подключение шлюза к серверу
 void onConnectionEstablished() {
-  Serial.println("connected");
+  Serial.println("new connected");
 }
 
 void publishData() {
@@ -24,6 +24,7 @@ void publishData() {
         long io_Door_Down = mypanel.readInt(VarName_Door_Down);   // целочисленная переменная
         Serial.println((String)"io_Door_Down = "+io_Door_Down);
         angle = io_Angle_Door;
+        delay(500);
         if (io_Door_Up == 1){
           Serial.println(angle);
           Serial.println ("Up");

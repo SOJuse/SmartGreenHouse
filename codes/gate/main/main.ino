@@ -16,9 +16,11 @@ double water;
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
-Scheduler userScheduler;   // для контроля
+Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
-int nodeNumber; //указываем номер ардуинки
+void publishData() ;   //задаем пустышку для коректной работы task
+Task taskpublishData( TASK_SECOND * 20 , TASK_FOREVER, &publishData );   //указываем задание
+int nodeNumber = 10; //указываем номер ардуинки
 int angle; //угол подъема 
 double temp, temp1, temp2;
 double hum, hum1, hum2;
@@ -29,8 +31,10 @@ String s_ghum1, s_ghum2;
 
 //const char* ssid = "iPhone (Grisha)";
 //const char* wifi_password = "12345678";
-const char* ssid = "AndroidA";
-const char* wifi_password = "chromech";
+//const char* ssid = "AndroidA";
+//const char* wifi_password = "chromech";
+const char* ssid = "GDR";
+const char* wifi_password = "chika16!";
 
 WiFiClient wifiClient;
 
@@ -68,6 +72,8 @@ void setup() {
 
     // Вызываем функцию первого запроса к сервису
     mypanel.begin();
+    userScheduler.addTask(taskpublishData);   //добавляем задание в обработчик
+    taskpublishData.enable();   //включаем задание
 }
 
 void loop() {

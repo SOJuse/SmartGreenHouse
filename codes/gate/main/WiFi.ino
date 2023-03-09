@@ -5,13 +5,13 @@ void WIFIinit() {
   WiFi.begin(ssid, wifi_password);
   while (--tries && WiFi.status() != WL_CONNECTED)
   {
-    delay(1000);
+    delay(1200);
   }
   if (WiFi.status() != WL_CONNECTED)
   { 
     // Если не удалось подключиться запускаем в режиме AP
     Serial.println("");
-    Serial.println("WiFi up AP");
+    Serial.println("WiFi not connected!");
  //   StartAPMode();
   }
   else {
