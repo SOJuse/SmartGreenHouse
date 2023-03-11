@@ -5,7 +5,7 @@ void WIFIinit() {
   WiFi.begin(ssid, wifi_password);
   while (--tries && WiFi.status() != WL_CONNECTED)
   {
-    delay(1200);
+    delay(1000);
   }
   if (WiFi.status() != WL_CONNECTED)
   { 

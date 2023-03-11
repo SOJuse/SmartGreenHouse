@@ -11,9 +11,9 @@ void publishData() {
 // ************************ ЧТЕНИЕ ************************
 
     // Чтение значений переменных из сервиса
-    status = mypanel.readUpdate();
+    panelStatus = mypanel.readUpdate();
     // Если статус равен константе OK...
-    if (status == OK) {
+    if (panelStatus == OK) {
         // Выводим текст в последовательный порт
         Serial.println("------- Read OK -------");
         // Записываем считанный из сервиса значения в переменные
@@ -24,6 +24,8 @@ void publishData() {
         long io_Door_Down = mypanel.readInt(VarName_Door_Down);   // целочисленная переменная
         Serial.println((String)"io_Door_Down = "+io_Door_Down);
         angle = io_Angle_Door;
+        doorUp = io_Door_Up;
+        doorDown = io_Door_Down;
         delay(500);
         if (io_Door_Up == 1){
           Serial.println(angle);
@@ -47,9 +49,9 @@ void publishData() {
     mypanel.write(VarName_Ground_Humidity_2, s_ghum2);  // Записали влажность почвы 2
     
     // Отправляем переменные из контроллера в сервис
-    status = mypanel.writeUpdate();
+    panelStatus = mypanel.writeUpdate();
     // Если статус равен константе OK...
-    if (status == OK) {
+    if (panelStatus == OK) {
         // Выводим текст в последовательный порт
         Serial.println("------- Write OK -------");
     }
@@ -59,4 +61,23 @@ void publishData() {
   delay(500);
   
  connecting_mesh();
+}
+
+void serialDataSend () {
+  JSONVar jsonReadings;
+  if (F == true) 
+  {
+  jsonReadings["node"] = nodeNumber;
+  jsonReadings["angle"] = angle;
+  jsonReadings["doorUp"] = doorUp;
+  jsonReadings["doorDown"] = doorDown;
+  String msg = JSON.stringify(jsonReadings);
+  mesh.sendBroadcast( msg );
+  Serial.println("Send serialData");
+  }
+  else
+  {
+  Serial.println("Can't send serialData");
+  }
+  
 }

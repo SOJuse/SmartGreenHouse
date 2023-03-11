@@ -5,6 +5,7 @@
 #include <Arduino_JSON.h>
 #include <Adafruit_AHTX0.h>
 
+#define NOSENSORS 1 // тестовые данные без датчиков задать 1
 
 //*********ПЕРЕМЕННЫЕ*********
 
@@ -17,10 +18,10 @@
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
 Adafruit_AHTX0 aht; // датчик темп-ры и влажности
-Scheduler userScheduler;   // для контроля
+Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void sendMessage() ;   //задаем пустышку для коректной работы task
-Task taskSendMessage( TASK_SECOND * 5 , TASK_FOREVER, &sendMessage );   //указываем задание
+Task taskSendMessage( TASK_SECOND * 2 , TASK_FOREVER, &sendMessage );   //указываем задание
 int nodeNumber = 1; //указываем номер ардуинки
 
 //----------------------------

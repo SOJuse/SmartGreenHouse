@@ -9,7 +9,7 @@
 //#include <WiFi.h>
 
 //*********ПЕРЕМЕННЫЕ*********
-boolean F = true;
+volatile boolean F = true;
 double water;
 
 //--------PAINLESSMESH--------
@@ -20,12 +20,15 @@ Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void publishData() ;   //задаем пустышку для коректной работы task
 Task taskpublishData( TASK_SECOND * 20 , TASK_FOREVER, &publishData );   //указываем задание
+void serialDataSend() ;   //задаем пустышку для коректной работы task
+Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
 int nodeNumber = 10; //указываем номер ардуинки
 int angle; //угол подъема 
 double temp, temp1, temp2;
 double hum, hum1, hum2;
-double ghum1, ghum2;
+byte ghum1, ghum2, doorUp, doorDown;
 String s_ghum1, s_ghum2;
+
 
 //------------WIFI------------
 
@@ -42,7 +45,7 @@ WiFiClient wifiClient;
 
 // Название панели на сайте iocontrol.ru
 const char* myPanelName = "smart_greenhouse1103";
-int status;
+int panelStatus;
 
 // Название переменных как на сайте iocontrol.ru
 const char* VarName_Temperature = "Temperature";
@@ -72,8 +75,10 @@ void setup() {
 
     // Вызываем функцию первого запроса к сервису
     mypanel.begin();
-    userScheduler.addTask(taskpublishData);   //добавляем задание в обработчик
+    userScheduler.addTask(taskpublishData);   //добавляем задание публикации iocontrol в обработчик
     taskpublishData.enable();   //включаем задание
+    userScheduler.addTask(taskSerialData);   //добавляем задание предачи данных на плату с исп.мех. в обработчик
+    taskSerialData.enable();   //включаем задание
 }
 
 void loop() {

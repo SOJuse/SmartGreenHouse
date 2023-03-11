@@ -31,13 +31,19 @@ void receivedCallback( uint32_t from, String &msg ) {
   Serial.println(s_ghum2);
   Serial.print("MK3 ");
   Serial.println(water);
+  Serial.print("T1=");
   Serial.println(temp1);
+  Serial.print("T2=");
   Serial.println(temp2);
+  Serial.print("Tavg=");
   Serial.println(temp);
+  Serial.print("h1=");
   Serial.println(hum1);
+  Serial.print("h2=");
   Serial.println(hum2);
+  Serial.print("havg=");
   Serial.println(hum);
-
+  Serial.println("***********************");
 //  publishData();
 }
 void newConnectionCallback(uint32_t nodeId) {
@@ -54,4 +60,5 @@ void connecting_mesh() {
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
+  F = true;
 }
