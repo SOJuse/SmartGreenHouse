@@ -22,7 +22,8 @@ void publishData() ;   //задаем пустышку для коректной
 Task taskpublishData( TASK_SECOND * 20 , TASK_FOREVER, &publishData );   //указываем задание
 void serialDataSend() ;   //задаем пустышку для коректной работы task
 Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
-int nodeNumber = 10; //указываем номер ардуинки
+int nodeNumber;
+byte mynodeNumber = 10; //указываем номер ардуинки
 int angle; //угол подъема 
 double temp, temp1, temp2;
 double hum, hum1, hum2;

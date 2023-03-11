@@ -67,13 +67,26 @@ void serialDataSend () {
   JSONVar jsonReadings;
   if (F == true) 
   {
-  jsonReadings["node"] = nodeNumber;
+  jsonReadings["node"] = mynodeNumber;
   jsonReadings["angle"] = angle;
   jsonReadings["doorUp"] = doorUp;
   jsonReadings["doorDown"] = doorDown;
   String msg = JSON.stringify(jsonReadings);
+  Serial.print("Send serialData =" );
+  Serial.printf(msg.c_str(), "\n");
+  Serial.println("");
   mesh.sendBroadcast( msg );
-  Serial.println("Send serialData");
+ /* Serial.print("Send serialData =");
+  Serial.printf(msg.c_str(), "\n");
+  Serial.print("node= ");
+  Serial.println(mynodeNumber);
+  Serial.print("angle= ");
+  Serial.println(angle);
+  Serial.print("doorUp= ");
+  Serial.println(doorUp);
+  Serial.print("doorDown= ");
+  Serial.println(doorDown);
+  Serial.println("======================");*/
   }
   else
   {
