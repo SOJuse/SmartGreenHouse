@@ -7,6 +7,7 @@
 //#include "EspMQTTClient.h"
 #include <PubSubClient.h>
 //#include <WiFi.h>
+//#include <WiFiClient.h>
 
 //*********ПЕРЕМЕННЫЕ*********
 volatile boolean F = true;
@@ -16,6 +17,12 @@ double water;
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
+#define   STATION_SSID "GDR"
+#define   STATION_PASSWORD "chika16!"
+#define   STATION_PORT     5555
+#define   HOSTNAME         "T_Bridge"
+#define   WIFI_CHANNEL    6
+
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void publishData() ;   //задаем пустышку для коректной работы task
@@ -29,6 +36,10 @@ double temp, temp1, temp2;
 double hum, hum1, hum2;
 byte ghum1, ghum2, doorUp, doorDown;
 String s_ghum1, s_ghum2;
+IPAddress getlocalIP();
+
+IPAddress myIP(0,0,0,0);
+IPAddress mqttBroker(192, 168, 1, 128);
 
 
 //------------WIFI------------
@@ -68,7 +79,12 @@ void setup() {
  //--------------MESH--------------
 
   mesh.setDebugMsgTypes( ERROR | STARTUP | CONNECTION );  // установите перед функцией init() чтобы выдавались приветственные сообщения
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, WIFI_CHANNEL );
+  mesh.initOTAReceive("bridge");
+  mesh.stationManual(STATION_SSID, STATION_PASSWORD);
+  mesh.setHostname(HOSTNAME);
+  mesh.setRoot(true);
+  mesh.setContainsRoot(true);
 
   //назначаем функциям свои события
   mesh.onReceive(&receivedCallback);
@@ -80,10 +96,22 @@ void setup() {
     taskpublishData.enable();   //включаем задание
     userScheduler.addTask(taskSerialData);   //добавляем задание предачи данных на плату с исп.мех. в обработчик
     taskSerialData.enable();   //включаем задание
+
+    myIP = getlocalIP();
+    Serial.println("My IP is " + myIP.toString());
 }
 
 void loop() {
   mesh.update(); //для коректной работы mesha
+  
+  if(myIP != getlocalIP()){
+    myIP = getlocalIP();
+    Serial.println("My IP is " + myIP.toString());
+  }
 
   
+}
+
+  IPAddress getlocalIP() {
+  return IPAddress(mesh.getStationIP());
 }

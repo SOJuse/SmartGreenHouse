@@ -48,6 +48,7 @@ void receivedCallback( uint32_t from, String &msg ) {
 }
 void newConnectionCallback(uint32_t nodeId) {
   Serial.printf("New Connection at gate, nodeId = %u\n", nodeId);
+  Serial.printf("--> Start: New Connection, %s\n", mesh.subConnectionJson(true).c_str());
 }
 
 void disconnecting_mesh() {

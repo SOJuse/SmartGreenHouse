@@ -4,9 +4,9 @@ void onConnectionEstablished() {
 }
 
 void publishData() {
- disconnecting_mesh();
+ // disconnecting_mesh();
  //Запускаем WIFI
-  WIFIinit();
+  //WIFIinit();
 
 // ************************ ЧТЕНИЕ ************************
 
@@ -26,7 +26,7 @@ void publishData() {
         angle = io_Angle_Door;
         doorUp = io_Door_Up;
         doorDown = io_Door_Down;
-        delay(500);
+ //       delay(500);
         if (io_Door_Up == 1){
           Serial.println(angle);
           Serial.println ("Up");
@@ -37,7 +37,11 @@ void publishData() {
            Serial.println("Down");
            mypanel.write(VarName_Door_Down, 0); 
            }
-    } 
+    }
+    else
+    {
+      Serial.println("===Can't read ioPanel==="); 
+    }
 
     // ************************ ЗАПИСЬ ************************
     
@@ -56,11 +60,11 @@ void publishData() {
         Serial.println("------- Write OK -------");
     }
 
- WiFi.mode(WIFI_OFF);
+// WiFi.mode(WIFI_OFF);
 //  Serial.println(WiFi.status());
-  delay(500);
+ // delay(500);
   
- connecting_mesh();
+// connecting_mesh();
 }
 
 void serialDataSend () {
