@@ -13,8 +13,6 @@
 Servo myservo1;
 Servo myservo2;
 
-boolean start_up = false;
-boolean start_down = false;
 int angle = 0;
 String strData = "";
 boolean recievedFlag = false;
@@ -22,8 +20,10 @@ Adafruit_INA219 ina219;         // Создаем объект ina219
 float current_mA = 0;       // Ток в мА
 int TIMER_PERIOD = 20000; //время работы увлажнителя
 int TIMER_PERIOD_POLIV = 10000;
-byte doorUp = 0;
-byte doorDown = 0;
+byte doorUp = 0; // команды на открытие
+byte doorDown = 0; // и закрытие форточки
+boolean st_up = false; // состояние форточки верх
+
 
 void setup()
 {
@@ -48,8 +48,8 @@ void setup()
 
 void window_move_up(int angle) {
   // поднимаем вверх
-  Serial.println("Up!");
-  Serial.println(angle);
+//  Serial.println("Up!");
+//  Serial.println(angle);
 
   for (byte i = 0; i <= angle; i++) {
     myservo1.write(0 + i);
@@ -58,21 +58,21 @@ void window_move_up(int angle) {
     //  if (current_mA > CURRENT_SET){ // ПЕРЕГРУЗКА!
     //    break;
     // }
-    Serial.print("i="); Serial.println(i);
-    Serial.print("cur="); Serial.println(current_mA);
+ //   Serial.print("i="); Serial.println(i);
+ //   Serial.print("cur="); Serial.println(current_mA);
     delay(50);
   }
 }
 
 void window_move_down(int angle) {
   // опускаем вниз
-  Serial.println("Down!");
-  Serial.println(angle);
+//  Serial.println("Down!");
+//  Serial.println(angle);
 
   for (byte i = 0; i <= angle; i++) {
     myservo1.write(angle - i);
     myservo2.write(180 - angle + i);
-    Serial.print("i="); Serial.println(i);
+ //   Serial.print("i="); Serial.println(i);
     delay(50);
   }
 
@@ -149,14 +149,15 @@ if (recievedFlag) {
 }
 
 //Serial.println(start_stop);
-if (start_up) {
+if (doorUp == 1 && st_up == false) {
   window_move_up(angle);
-  start_up = false;
+  st_up = true;
+  
 }
 
-if (start_down) {
+if (doorDown == 1 && st_up == true) {
   window_move_down(angle);
-  start_down = false;
+  st_up = false;
 }
 
 }
