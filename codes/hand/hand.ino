@@ -2,6 +2,7 @@
 #include <MsTimer2.h>
 #include <Wire.h>               // Подключаем библиотеку Wire 
 #include <Adafruit_INA219.h>    // Подключаем библиотеку Adafruit INA219 (A4-SDA-оранж.  A5-SCL-красн.)
+#include <Arduino_JSON.h>
 #define SERVO1_LEFT 12
 #define SERVO2_RIGHT 11
 #define CURRENT_SET 850
@@ -21,6 +22,8 @@ Adafruit_INA219 ina219;         // Создаем объект ina219
 float current_mA = 0;       // Ток в мА
 int TIMER_PERIOD = 20000; //время работы увлажнителя
 int TIMER_PERIOD_POLIV = 10000;
+byte doorUp = 0;
+byte doorDown = 0;
 
 void setup()
 {
@@ -36,7 +39,7 @@ void setup()
   MsTimer2::set(TIMER_PERIOD_POLIV, on_timer_poliv);
 
   delay(1000);
-  Serial.begin(9600); // подключаем монитор порта
+  Serial.begin(115200); // подключаем монитор порта
 
   if (! ina219.begin()) {
     Serial.println("Failed to find INA219 chip");
@@ -85,6 +88,7 @@ void on_timer_poliv() {
   MsTimer2::stop();
 }
 
+
 void loop()
 {
 
@@ -96,7 +100,9 @@ void loop()
     }
     recievedFlag = true;                        // поднять флаг что получили данные
   }
-  if (recievedFlag) {                           // если есть принятые данные
+  
+  
+/*  if (recievedFlag) {                           // если есть принятые данные
     if (strData.startsWith("up")) {              // разбор строки
       start_up = true;
       Serial.println("up");
@@ -123,9 +129,24 @@ void loop()
       angle = strData.toInt();
     }
     recievedFlag = false;                       // данные приняты!
-  }
+  }*/
 
-
+if (recievedFlag) {
+ Serial.println("New data...");
+ Serial.println(strData);
+ JSONVar myObject = JSON.parse(strData);   //парсим полученные данные
+ angle = myObject["angle"];
+ doorUp = myObject["doorUp"];
+ doorDown = myObject["doorDown"];
+ recievedFlag = false; // данные приняты
+ Serial.print("angle = ");
+ Serial.println(angle);
+ Serial.print("doorUp = ");
+ Serial.println(doorUp);
+ Serial.print("doorDown = ");
+ Serial.println(doorDown);
+ 
+}
 
 //Serial.println(start_stop);
 if (start_up) {
