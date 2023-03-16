@@ -32,7 +32,7 @@ void setup() {
   digitalWrite(sensorPower, LOW);
   Serial.begin(115200);
   mesh.setDebugMsgTypes(ERROR | STARTUP );  // установите перед функцией init() чтобы выдавались приветственные сообщения
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, 8);
 
   //назначаем функциям свои события
 
