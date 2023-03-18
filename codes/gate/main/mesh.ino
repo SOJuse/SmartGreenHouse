@@ -1,5 +1,5 @@
 void receivedCallback( uint32_t from, String &msg ) {
-  //Serial.printf(msg.c_str(), "\n");
+  
   JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
   //записываем значения в переменные
   nodeNumber = myObject["node"];
@@ -49,17 +49,4 @@ void receivedCallback( uint32_t from, String &msg ) {
 void newConnectionCallback(uint32_t nodeId) {
   Serial.printf("New Connection at gate, nodeId = %u\n", nodeId);
   Serial.printf("--> Start: New Connection, %s\n", mesh.subConnectionJson(true).c_str());
-}
-
-void disconnecting_mesh() {
-  F = false;
-  mesh.stop();
-}
-
-void connecting_mesh() {
-  mesh.setDebugMsgTypes( ERROR | STARTUP );  // установите перед функцией init() чтобы выдавались приветственные сообщения
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
-  mesh.onReceive(&receivedCallback);
-  mesh.onNewConnection(&newConnectionCallback);
-  F = true;
 }

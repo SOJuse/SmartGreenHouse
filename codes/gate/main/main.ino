@@ -9,12 +9,8 @@
 //#include <WiFi.h>
 //#include <WiFiClient.h>
 
-//*********ПЕРЕМЕННЫЕ*********
-volatile boolean F = true;
-double water;
-
 //--------PAINLESSMESH--------
-#define   MESH_PREFIX     "teplitsa"   //логин нашей сети
+#define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
 #define   STATION_SSID "GDR"
@@ -39,6 +35,7 @@ Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //ук
 int nodeNumber;
 byte mynodeNumber = 10; //указываем номер ардуинки
 int angle; //угол подъема 
+double water;
 double temp, temp1, temp2;
 double hum, hum1, hum2;
 byte ghum1, ghum2, doorUp, doorDown;
@@ -105,35 +102,21 @@ void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
   String msg = String(cleanPayload);
   free(cleanPayload);
 
-  String targetStr = String(topic).substring(16);
+ Serial.print("Message from mqtt=");
+ Serial.println(msg);
 
-  if(targetStr == "gateway")
-  {
-    if(msg == "getNodes")
-    {
-      auto nodes = mesh.getNodeList(true);
-      String str;
-      for (auto &&id : nodes)
-        str += String(id) + String(" ");
-      mqttClient.publish("painlessMesh/from/gateway", str.c_str());
-    }
+ JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
+  
+  if (myObject.hasOwnProperty("angle")){ // если передается угол
+  angle = myObject["angle"];
   }
-  else if(targetStr == "broadcast") 
-  {
-    mesh.sendBroadcast(msg);
+
+  if (myObject.hasOwnProperty("doorUp") || myObject.hasOwnProperty("doorDown")){ // если команда на форточку
+  doorUp = myObject["doorUp"];
+  doorDown = myObject["doorDown"];
   }
-  else
-  {
-    uint32_t target = strtoul(targetStr.c_str(), NULL, 10);
-    if(mesh.isConnected(target))
-    {
-      mesh.sendSingle(target, msg);
-    }
-    else
-    {
-      mqttClient.publish("painlessMesh/from/gateway", "Client not connected!");
-    }
-  }
+   
+ 
 }
 
 IPAddress getlocalIP() {
