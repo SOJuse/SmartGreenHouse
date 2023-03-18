@@ -5,7 +5,7 @@ String getReadings () {
   JSONVar jsonReadings;
   jsonReadings["node"] = nodeNumber;
   #if (NOSENSORS == 1) // режим отладки без датчиков
-   jsonReadings["temp"] = 24;
+   jsonReadings["temp"] = 24.35;
    jsonReadings["hum"] = 45;
    jsonReadings["ghum"] = 1;
   #else

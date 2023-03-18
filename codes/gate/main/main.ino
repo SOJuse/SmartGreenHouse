@@ -16,16 +16,23 @@ double water;
 //--------PAINLESSMESH--------
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
-#define   MESH_PORT       5555   //порт по дефолту 5555
+#define   MESH_PORT       5555   //порт 
 #define   STATION_SSID "GDR"
 #define   STATION_PASSWORD "chika16!"
 #define   STATION_PORT     5555
-#define   HOSTNAME         "T_Bridge"
-#define   WIFI_CHANNEL    6
+#define   HOSTNAME         "MQTT_Bridge"
+#define   WIFI_CHANNEL    8
+
+const char* mqtt_server = "dev.rightech.io";
+const char* mqtt_username = "mqtt-1103"; 
+const char* mqtt_password = "teplitsa"; 
+const char* clientID = "mqtt-pa62-a5vfip";
+
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void publishData() ;   //задаем пустышку для коректной работы task
+void mqttCallback(char* topic, byte* payload, unsigned int length); // прототип для mqttCallback
 Task taskpublishData( TASK_SECOND * 20 , TASK_FOREVER, &publishData );   //указываем задание
 void serialDataSend() ;   //задаем пустышку для коректной работы task
 Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
@@ -39,40 +46,9 @@ String s_ghum1, s_ghum2;
 IPAddress getlocalIP();
 
 IPAddress myIP(0,0,0,0);
-IPAddress mqttBroker(192, 168, 1, 128);
-
-
-//------------WIFI------------
-
-//const char* ssid = "iPhone (Grisha)";
-//const char* wifi_password = "12345678";
-//const char* ssid = "AndroidA";
-//const char* wifi_password = "chromech";
-const char* ssid = "GDR";
-const char* wifi_password = "chika16!";
-
 WiFiClient wifiClient;
+PubSubClient mqttClient(mqtt_server, 1883, mqttCallback, wifiClient);
 
-//----------IOCONTROL----------
-
-// Название панели на сайте iocontrol.ru
-const char* myPanelName = "smart_greenhouse1103";
-int panelStatus;
-
-// Название переменных как на сайте iocontrol.ru
-const char* VarName_Temperature = "Temperature";
-const char* VarName_Humidity = "Humidity";
-const char* VarName_Water_Level = "Water_Level";
-const char* VarName_Angle_Door = "Angle_Door";
-const char* VarName_Ground_Humidity_1 = "Ground_Humidity_1";
-const char* VarName_Ground_Humidity_2 = "Ground_Humidity_2";
-const char* VarName_Door_Up = "Door_Up";
-const char* VarName_Door_Down = "Door_Down";
-
-  
-  WiFiClient client;   // Создаём объект клиента класса EthernetClient
-  //передаем в конструктр название панели и клиента
-  iocontrol mypanel(myPanelName, client);
 
 void setup() {
   Serial.begin(115200);
@@ -80,7 +56,6 @@ void setup() {
 
   mesh.setDebugMsgTypes( ERROR | STARTUP | CONNECTION );  // установите перед функцией init() чтобы выдавались приветственные сообщения
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, WIFI_CHANNEL );
-  mesh.initOTAReceive("bridge");
   mesh.stationManual(STATION_SSID, STATION_PASSWORD);
   mesh.setHostname(HOSTNAME);
   mesh.setRoot(true);
@@ -90,28 +65,77 @@ void setup() {
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
 
-    // Вызываем функцию первого запроса к сервису
-    mypanel.begin();
-    userScheduler.addTask(taskpublishData);   //добавляем задание публикации iocontrol в обработчик
-    taskpublishData.enable();   //включаем задание
-    userScheduler.addTask(taskSerialData);   //добавляем задание предачи данных на плату с исп.мех. в обработчик
-    taskSerialData.enable();   //включаем задание
+  userScheduler.addTask(taskpublishData);   //добавляем задание публикации iocontrol в обработчик
+  taskpublishData.enable();   //включаем задание
+  userScheduler.addTask(taskSerialData);   //добавляем задание предачи данных на плату с исп.мех. в обработчик
+  taskSerialData.enable();   //включаем задание
 
-    myIP = getlocalIP();
-    Serial.println("My IP is " + myIP.toString());
-}
+ }
 
 void loop() {
   mesh.update(); //для коректной работы mesha
+  mqttClient.loop();
   
   if(myIP != getlocalIP()){
     myIP = getlocalIP();
     Serial.println("My IP is " + myIP.toString());
+    //после получения ip адреса соединимся с сервером
+    if (mqttClient.connect(clientID, mqtt_username, mqtt_password)) {
+        Serial.println("Connected to MQTT Broker");
+    }
+    else {
+    Serial.println("Connection to MQTT Broker failed...");
+  }
   }
 
-  
+   if (mqttClient.connected() == false) { // если соединение разорвалось, попробуем еще раз
+       if (mqttClient.connect(clientID, mqtt_username, mqtt_password)) {
+        Serial.println("Connected to MQTT Broker");
+        }
+        else {
+         Serial.println("Connection to MQTT Broker failed...");
+         }
+     }
 }
 
-  IPAddress getlocalIP() {
+void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
+  char* cleanPayload = (char*)malloc(length+1);
+  memcpy(cleanPayload, payload, length);
+  cleanPayload[length] = '\0';
+  String msg = String(cleanPayload);
+  free(cleanPayload);
+
+  String targetStr = String(topic).substring(16);
+
+  if(targetStr == "gateway")
+  {
+    if(msg == "getNodes")
+    {
+      auto nodes = mesh.getNodeList(true);
+      String str;
+      for (auto &&id : nodes)
+        str += String(id) + String(" ");
+      mqttClient.publish("painlessMesh/from/gateway", str.c_str());
+    }
+  }
+  else if(targetStr == "broadcast") 
+  {
+    mesh.sendBroadcast(msg);
+  }
+  else
+  {
+    uint32_t target = strtoul(targetStr.c_str(), NULL, 10);
+    if(mesh.isConnected(target))
+    {
+      mesh.sendSingle(target, msg);
+    }
+    else
+    {
+      mqttClient.publish("painlessMesh/from/gateway", "Client not connected!");
+    }
+  }
+}
+
+IPAddress getlocalIP() {
   return IPAddress(mesh.getStationIP());
 }

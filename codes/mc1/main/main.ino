@@ -6,6 +6,7 @@
 #include <Adafruit_AHTX0.h>
 
 #define NOSENSORS 1 // тестовые данные без датчиков задать 1
+#define   WIFI_CHANNEL    8
 
 //*********ПЕРЕМЕННЫЕ*********
 
@@ -32,7 +33,7 @@ void setup() {
   digitalWrite(sensorPower, LOW);
   Serial.begin(115200);
   mesh.setDebugMsgTypes(ERROR | STARTUP );  // установите перед функцией init() чтобы выдавались приветственные сообщения
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, 8);
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, WIFI_CHANNEL);
 
   //назначаем функциям свои события
 
