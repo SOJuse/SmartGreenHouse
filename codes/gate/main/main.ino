@@ -34,7 +34,7 @@ void serialDataSend() ;   //задаем прототип для коректн�
 Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
 int nodeNumber;
 byte mynodeNumber = 10; //указываем номер ардуинки
-int angle; //угол подъема 
+int angle=30; //угол подъема 
 double water;
 double temp, temp1, temp2;
 double hum, hum1, hum2;
