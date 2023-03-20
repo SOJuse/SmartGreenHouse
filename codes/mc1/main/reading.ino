@@ -14,6 +14,7 @@ String getReadings () {
   jsonReadings["temp"] = temp.temperature;
   jsonReadings["hum"] = humidity.relative_humidity;
   jsonReadings["ghum"] = readSensor();
+  Serial.println(JSON.stringify(jsonReadings));
   #endif
   return JSON.stringify(jsonReadings);
 }

@@ -1,6 +1,6 @@
 //шлюз
 
-#include <iocontrol.h>
+//#include <iocontrol.h>
 #include <ESP8266WiFi.h>
 #include <Arduino_JSON.h>
 #include "painlessMesh.h"
@@ -13,23 +13,23 @@
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
-#define   STATION_SSID "GDR"
-#define   STATION_PASSWORD "chika16!"
+#define   STATION_SSID "iPhone (Grisha)"
+#define   STATION_PASSWORD "12345678"
 #define   STATION_PORT     5555
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    8
+#define   WIFI_CHANNEL    6
 
 const char* mqtt_server = "dev.rightech.io";
-const char* mqtt_username = "mqtt-1103"; 
-const char* mqtt_password = "teplitsa"; 
-const char* clientID = "mqtt-pa62-a5vfip";
+const char* mqtt_username = "hihi23"; 
+const char* mqtt_password = "hihi23"; 
+const char* clientID = "mqtt-greenhouse1103";
 
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void publishData() ;   //задаем прототип для коректной работы task
 void mqttCallback(char* topic, byte* payload, unsigned int length); // прототип для mqttCallback
-Task taskpublishData( TASK_SECOND * 20 , TASK_FOREVER, &publishData );   //указываем задание
+Task taskpublishData( TASK_SECOND * 5 , TASK_FOREVER, &publishData );   //указываем задание
 void serialDataSend() ;   //задаем прототип для коректной работы task
 Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
 int nodeNumber;
