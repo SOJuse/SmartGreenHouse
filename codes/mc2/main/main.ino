@@ -8,8 +8,10 @@
 
 //*********ПЕРЕМЕННЫЕ*********
 
-#define sensorPower D2
+//#define sensorPower D2
 #define sensorPin A0
+#define NOSENSORS 1 // тестовые данные без датчиков задать 1
+#define   WIFI_CHANNEL    8
 
 //--------PAINLESSMESH--------
 
@@ -20,18 +22,18 @@ Adafruit_AHTX0 aht; // датчик темп-ры и влажности
 Scheduler userScheduler;   // для контроля
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void sendMessage() ;   //задаем пустышку для коректной работы task
-Task taskSendMessage( TASK_SECOND * 5 , TASK_FOREVER, &sendMessage );   //указываем задание
+Task taskSendMessage( TASK_SECOND * 2 , TASK_FOREVER, &sendMessage );   //указываем задание
 int nodeNumber = 2; //указываем номер ардуинки
 
 //----------------------------
 
 void setup() {
-  pinMode(sensorPower, OUTPUT);
+ // pinMode(sensorPower, OUTPUT);
   // Изначально оставляем датчику выключенным
-  digitalWrite(sensorPower, LOW);
+//  digitalWrite(sensorPower, LOW);
   Serial.begin(115200);
   mesh.setDebugMsgTypes(ERROR | STARTUP );  // установите перед функцией init() чтобы выдавались приветственные сообщения
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, WIFI_CHANNEL);
 
   //назначаем функциям свои события
 

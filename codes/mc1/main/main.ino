@@ -10,7 +10,7 @@
 
 //*********ПЕРЕМЕННЫЕ*********
 
-#define sensorPower D2
+//#define sensorPower D2
 #define sensorPin A0
 
 //--------PAINLESSMESH--------
@@ -28,9 +28,9 @@ int nodeNumber = 1; //указываем номер ардуинки
 //----------------------------
 
 void setup() {
-  pinMode(sensorPower, OUTPUT);
+//  pinMode(sensorPower, OUTPUT);
   // Изначально оставляем датчик выключенным
-  digitalWrite(sensorPower, LOW);
+//  digitalWrite(sensorPower, LOW);
   Serial.begin(115200);
   mesh.setDebugMsgTypes(ERROR | STARTUP );  // установите перед функцией init() чтобы выдавались приветственные сообщения
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, WIFI_CHANNEL);

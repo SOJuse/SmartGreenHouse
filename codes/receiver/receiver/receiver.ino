@@ -7,6 +7,7 @@
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
+#define   WIFI_CHANNEL    8
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
@@ -14,16 +15,14 @@ painlessMesh  mesh;   //обозначаем нашу библиотеку ка�
 //Task taskSendMessage( TASK_SECOND * 2 , TASK_FOREVER, &sendMessage );   //указываем задание
 int nodeNumber; //указываем номер ардуинки
 int angle; //угол подъема 
-//double temp, temp1, temp2, water;
-//double hum, hum1, hum2;
 byte doorUp, doorDown;
-//String s_ghum1, s_ghum2;
+
 
 void setup() {
   
   Serial.begin(115200);
  // mesh.setDebugMsgTypes(ERROR | STARTUP | CONNECTION);  // установите перед функцией init() чтобы выдавались приветственные сообщения
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT, WIFI_AP_STA, WIFI_CHANNEL);
 
   //назначаем функциям свои события
 

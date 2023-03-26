@@ -12,6 +12,9 @@ if (mqttClient.connected()) {
      mqttClient.publish("base/state/temperature1", String(temp1,2).c_str() ); 
      mqttClient.publish("base/state/temperature2", String(temp2,2).c_str() );
      mqttClient.publish("base/state/waterlevel", String(water,2).c_str() );  
+     mqttClient.publish("base/state/humidity1", String(hum1,2).c_str() );  
+     mqttClient.publish("base/state/humidity2", String(hum2,2).c_str() );
+     mqttClient.publish("base/state/humidity", String(hum,2).c_str() );
      Serial.println("Message to server sent");
         
 }

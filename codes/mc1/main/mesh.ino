@@ -4,8 +4,9 @@ void sendMessage() {
 }
 
 void receivedCallback( uint32_t from, String &msg ) {
+  Serial.print("receive msg=");
   Serial.printf(msg.c_str(), "\n");
-  JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
+ /* JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
   //записываем значения в переменные
   int node = myObject["node"];
   double temp = myObject["temp"];
@@ -20,7 +21,7 @@ void receivedCallback( uint32_t from, String &msg ) {
   Serial.print(hum);
   Serial.println(" %");
   Serial.print("Ground:");
-  Serial.print(ghum);
+  Serial.print(ghum);*/
 }
 void newConnectionCallback(uint32_t nodeId) {
   Serial.printf("New Connection, nodeId = %u\n", nodeId);
