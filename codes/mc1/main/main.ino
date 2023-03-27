@@ -5,7 +5,7 @@
 #include <Arduino_JSON.h>
 #include <Adafruit_AHTX0.h>
 
-#define NOSENSORS 1 // тестовые данные без датчиков задать 1
+#define NOSENSORS 0 // тестовые данные без датчиков задать 1
 #define   WIFI_CHANNEL    8
 
 //*********ПЕРЕМЕННЫЕ*********
