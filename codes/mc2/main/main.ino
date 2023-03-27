@@ -10,7 +10,7 @@
 
 //#define sensorPower D2
 #define sensorPin A0
-#define NOSENSORS 1 // тестовые данные без датчиков задать 1
+#define NOSENSORS 0 // тестовые данные без датчиков задать 1
 #define   WIFI_CHANNEL    8
 
 //--------PAINLESSMESH--------
