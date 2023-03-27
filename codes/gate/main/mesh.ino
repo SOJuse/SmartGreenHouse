@@ -25,11 +25,11 @@ void receivedCallback( uint32_t from, String &msg ) {
   }
   temp = (temp1 + temp2) / 2;
   hum = (hum1 + hum2) / 2;
-  Serial.print("MK1 ");
+  Serial.print("MK1 ground =");
   Serial.println(s_ghum1);
-  Serial.print("MK2 ");
+  Serial.print("MK2 ground =");
   Serial.println(s_ghum2);
-  Serial.print("MK3 ");
+  Serial.print("MK3 water level =");
   Serial.println(water);
   Serial.print("T1=");
   Serial.println(temp1);
@@ -44,7 +44,7 @@ void receivedCallback( uint32_t from, String &msg ) {
   Serial.print("havg=");
   Serial.println(hum);
   Serial.println("***********************");
-//  publishData();
+
 }
 void newConnectionCallback(uint32_t nodeId) {
   Serial.printf("New Connection at gate, nodeId = %u\n", nodeId);

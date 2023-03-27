@@ -4,10 +4,8 @@
 #include <ESP8266WiFi.h>
 #include <Arduino_JSON.h>
 #include "painlessMesh.h"
-//#include "EspMQTTClient.h"
 #include <PubSubClient.h>
-//#include <WiFi.h>
-//#include <WiFiClient.h>
+
 
 //--------PAINLESSMESH--------
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
@@ -20,21 +18,21 @@
 #define   WIFI_CHANNEL    8
 
 const char* mqtt_server = "dev.rightech.io";
-const char* mqtt_username = "mqtt-1103"; 
-const char* mqtt_password = "teplitsa"; 
-const char* clientID = "mqtt-pa62-a5vfip";
+const char* mqtt_username = "hihi23"; 
+const char* mqtt_password = "hihi23"; 
+const char* clientID = "mqtt-greenhouse1103";
 
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void publishData() ;   //задаем прототип для коректной работы task
 void mqttCallback(char* topic, byte* payload, unsigned int length); // прототип для mqttCallback
-Task taskpublishData( TASK_SECOND * 20 , TASK_FOREVER, &publishData );   //указываем задание
+Task taskpublishData( TASK_SECOND * 15 , TASK_FOREVER, &publishData );   //указываем задание
 void serialDataSend() ;   //задаем прототип для коректной работы task
 Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
 int nodeNumber;
-byte mynodeNumber = 10; //указываем номер ардуинки
-int angle=30; //угол подъема 
+byte mynodeNumber = 10; //указываем номер узла для шлюза
+int angle=30; //угол подъема по умолчанию
 double water;
 double temp, temp1, temp2;
 double hum, hum1, hum2;

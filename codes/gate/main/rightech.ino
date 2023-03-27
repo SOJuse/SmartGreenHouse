@@ -15,6 +15,10 @@ if (mqttClient.connected()) {
      mqttClient.publish("base/state/humidity1", String(hum1,2).c_str() );  
      mqttClient.publish("base/state/humidity2", String(hum2,2).c_str() );
      mqttClient.publish("base/state/humidity", String(hum,2).c_str() );
+     mqttClient.publish("base/state/ground-humidity-1", s_ghum1.c_str() );
+     mqttClient.publish("base/state/ground-humidity-2", s_ghum2.c_str() );
+     mqttClient.publish("base/state/water-lvl", String(water,DEC).c_str() );
+     mqttClient.publish("base/state/angle", String(angle,DEC).c_str() );
      Serial.println("Message to server sent");
         
 }
