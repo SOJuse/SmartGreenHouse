@@ -1,6 +1,6 @@
 //шлюз
 
-#include <iocontrol.h>
+//#include <iocontrol.h>
 #include <ESP8266WiFi.h>
 #include <Arduino_JSON.h>
 #include "painlessMesh.h"
@@ -11,11 +11,11 @@
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
-#define   STATION_SSID "GDR"
-#define   STATION_PASSWORD "chika16!"
+#define   STATION_SSID "iPhone (Grisha)"
+#define   STATION_PASSWORD "12345678"
 #define   STATION_PORT     5555
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    8
+#define   WIFI_CHANNEL    6
 
 const char* mqtt_server = "dev.rightech.io";
 const char* mqtt_username = "hihi23"; 
