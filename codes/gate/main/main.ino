@@ -11,11 +11,13 @@
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
-#define   STATION_SSID "iPhone (Grisha)"
-#define   STATION_PASSWORD "12345678"
+//#define   STATION_SSID "iPhone (Grisha)"
+#define   STATION_SSID "GDR"
+//#define   STATION_PASSWORD "12345678"
+#define   STATION_PASSWORD "chika16!"
 #define   STATION_PORT     5555
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    6
+#define   WIFI_CHANNEL    8
 
 const char* mqtt_server = "dev.rightech.io";
 const char* mqtt_username = "hihi23"; 
@@ -28,15 +30,20 @@ painlessMesh  mesh;   //обозначаем нашу библиотеку ка�
 void publishData() ;   //задаем прототип для коректной работы task
 void mqttCallback(char* topic, byte* payload, unsigned int length); // прототип для mqttCallback
 Task taskpublishData( TASK_SECOND * 15 , TASK_FOREVER, &publishData );   //указываем задание
-void serialDataSend() ;   //задаем прототип для коректной работы task
+void serialDataSend() ;   //задаем прототип для корректной работы task
 Task taskSerialData( TASK_SECOND * 5 , TASK_FOREVER, &serialDataSend );   //указываем задание
+void autoControl() ;   //задаем прототип для автоматического управления
+Task taskAutoControl( TASK_SECOND * 5 , TASK_FOREVER, &autoControl );   //указываем задание
 int nodeNumber;
 byte mynodeNumber = 10; //указываем номер узла для шлюза
 int angle=30; //угол подъема по умолчанию
+int set_hydration = 30; //уставка влажности по умолчанию
 double water;
-double temp, temp1, temp2;
-double hum, hum1, hum2;
-byte ghum1, ghum2, doorUp, doorDown;
+double temp = 15; //начальная температура, чтобы не было сработки
+double temp1, temp2;
+double hum = 50; //начальная влажность, чтобы не было сработки
+double hum1, hum2;
+byte ghum1, ghum2, doorUp, doorDown, hydration_on;
 String s_ghum1, s_ghum2;
 IPAddress getlocalIP();
 
@@ -66,7 +73,8 @@ void setup() {
   taskpublishData.enable();   //включаем задание
   userScheduler.addTask(taskSerialData);   //добавляем задание предачи данных на плату с исп.мех. в обработчик
   taskSerialData.enable();   //включаем задание
-
+  userScheduler.addTask(taskAutoControl);   //добавляем задание автоконтроля
+  taskAutoControl.enable();   //включаем задание
  }
 
 void loop() {
@@ -116,10 +124,31 @@ void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
   doorUp = myObject["doorUp"];
   doorDown = myObject["doorDown"];
   }
-   
- 
+  
+  if (myObject.hasOwnProperty("hydration_on")){ // если передается команда на увлажнение
+  hydration_on = myObject["hydration_on"];
+  }   
+
+  if (myObject.hasOwnProperty("set_hydration")){ // если передается уставка на влажность
+  set_hydration = myObject["set_hydration"];
+  }
 }
 
 IPAddress getlocalIP() {
   return IPAddress(mesh.getStationIP());
 }
+
+void autoControl() {
+  //управление влажностью
+  if (hum < set_hydration) {
+    hydration_on = 1;
+}
+  else {
+    hydration_on = 0;
+  }
+  //управление форточкой
+
+  //управление поливом
+
+  
+  }

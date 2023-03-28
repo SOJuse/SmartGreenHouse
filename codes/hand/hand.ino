@@ -1,13 +1,14 @@
 #include <Servo.h>
-#include <MsTimer2.h>
+// #include <MsTimer2.h>
 #include <Wire.h>               // Подключаем библиотеку Wire 
 #include <Adafruit_INA219.h>    // Подключаем библиотеку Adafruit INA219 (A4-SDA-оранж.  A5-SCL-красн.)
 #include <Arduino_JSON.h>
+
 #define SERVO1_LEFT 12
 #define SERVO2_RIGHT 11
 #define CURRENT_SET 850
-#define mosPIN 4
-#define pompPIN1 9
+#define mosPIN 4 //увлажнитель
+#define pompPIN1 9 //насос
 
 // создаём объекты для управления сервоприводами
 Servo myservo1;
@@ -22,7 +23,10 @@ int TIMER_PERIOD = 20000; //время работы увлажнителя
 int TIMER_PERIOD_POLIV = 10000;
 byte doorUp = 0; // команды на открытие
 byte doorDown = 0; // и закрытие форточки
+byte hydration_on = 0; //команда на увлажнение
 boolean st_up = false; // состояние форточки верх
+boolean hum_on = false; // состояние увлажнителя выкл
+unsigned long cur_time_hum = 0; //время работы увлажнителя
 
 
 void setup()
@@ -35,9 +39,6 @@ void setup()
   // увлажнитель
   pinMode(mosPIN, OUTPUT);
   digitalWrite(mosPIN, 0);
-  MsTimer2::set(TIMER_PERIOD, on_timer);
-  MsTimer2::set(TIMER_PERIOD_POLIV, on_timer_poliv);
-
   delay(1000);
   Serial.begin(115200); // подключаем монитор порта
 
@@ -78,16 +79,16 @@ void window_move_down(int angle) {
 
 }
 
-void on_timer() {
-  digitalWrite(mosPIN, 0); // включить увлажнитель
-  MsTimer2::stop();
-}
-
+//void on_timer() {
+  //digitalWrite(mosPIN, 0); // включить увлажнитель
+ // MsTimer2::stop();
+//}
+/*
 void on_timer_poliv() {
   digitalWrite(pompPIN1, 0); // включить увлажнитель
   MsTimer2::stop();
 }
-
+*/
 
 void loop()
 {
@@ -138,6 +139,8 @@ if (recievedFlag) {
  angle = myObject["angle"];
  doorUp = myObject["doorUp"];
  doorDown = myObject["doorDown"];
+ hydration_on = myObject["hydration_on"];
+ 
  recievedFlag = false; // данные приняты
  Serial.print("angle = ");
  Serial.println(angle);
@@ -145,14 +148,14 @@ if (recievedFlag) {
  Serial.println(doorUp);
  Serial.print("doorDown = ");
  Serial.println(doorDown);
- 
+ Serial.print("hydration_on = ");
+ Serial.println(hydration_on);
 }
 
-//Serial.println(start_stop);
+//управлене форточкой
 if (doorUp == 1 && st_up == false) {
   window_move_up(angle);
   st_up = true;
-  
 }
 
 if (doorDown == 1 && st_up == true) {
@@ -160,4 +163,17 @@ if (doorDown == 1 && st_up == true) {
   st_up = false;
 }
 
+// управление увлажнителем
+if (hydration_on == 1 && hum_on == false) {
+  digitalWrite(mosPIN, 1);
+  cur_time_hum = millis();
+  hum_on = true;
+  Serial.println ("hydration on!");
+} 
+
+if (hum_on && millis() - cur_time_hum >= 10000) {
+  digitalWrite(mosPIN, 0);
+  hum_on = false;
+  Serial.println ("hydration off!");
+}
 }
