@@ -18,7 +18,7 @@ void receivedCallback( uint32_t from, String &msg ) {
       ghum2 = myObject["ghum"];
       if (ghum2 == 0) s_ghum2 = "Dry";
       if (ghum2 == 1) s_ghum2 = "Norm";
-      if (ghum1 == 2) s_ghum2 = "Wet";
+      if (ghum2 == 2) s_ghum2 = "Wet";
       break;
     case 3:
     water = myObject["waterLevel"];
