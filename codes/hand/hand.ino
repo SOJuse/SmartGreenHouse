@@ -24,6 +24,8 @@ int TIMER_PERIOD_POLIV = 10000;
 byte doorUp = 0; // команды на открытие
 byte doorDown = 0; // и закрытие форточки
 byte hydration_on = 0; //команда на увлажнение
+byte watering_on_1 = 0; //команда на полив первой помпы
+byte watering_on_2 = 0; //команда на полив второй помпы
 boolean st_up = false; // состояние форточки верх
 boolean hum_on = false; // состояние увлажнителя выкл
 unsigned long cur_time_hum = 0; //время работы увлажнителя
@@ -140,6 +142,8 @@ if (recievedFlag) {
  doorUp = myObject["doorUp"];
  doorDown = myObject["doorDown"];
  hydration_on = myObject["hydration_on"];
+ watering_on_1 = myObject["watering_on_1"];
+ watering_on_2 = myObject["watering_on_2"];
  
  recievedFlag = false; // данные приняты
  Serial.print("angle = ");
@@ -150,6 +154,10 @@ if (recievedFlag) {
  Serial.println(doorDown);
  Serial.print("hydration_on = ");
  Serial.println(hydration_on);
+ Serial.print("watering_on_1 = ");
+ Serial.println(watering_on_1);
+ Serial.print("watering_on_2 = ");
+ Serial.println(watering_on_2);
 }
 
 //управлене форточкой

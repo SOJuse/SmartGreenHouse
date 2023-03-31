@@ -11,13 +11,13 @@
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
-//#define   STATION_SSID "iPhone (Grisha)"
-#define   STATION_SSID "GDR"
-//#define   STATION_PASSWORD "12345678"
-#define   STATION_PASSWORD "chika16!"
+#define   STATION_SSID "iPhone (Grisha)"
+//#define   STATION_SSID "GDR"
+#define   STATION_PASSWORD "12345678"
+//#define   STATION_PASSWORD "chika16!"
 #define   STATION_PORT     5555
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    8
+#define   WIFI_CHANNEL    6
 
 const char* mqtt_server = "dev.rightech.io";
 const char* mqtt_username = "hihi23"; 
@@ -43,7 +43,7 @@ double temp = 15; //начальная температура, чтобы не �
 double temp1, temp2;
 double hum = 50; //начальная влажность, чтобы не было сработки
 double hum1, hum2;
-byte ghum1, ghum2, doorUp, doorDown, hydration_on;
+byte ghum1, ghum2, doorUp, doorDown, hydration_on, watering_on_1, watering_on_2;
 String s_ghum1, s_ghum2;
 IPAddress getlocalIP();
 
