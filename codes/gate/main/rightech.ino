@@ -31,13 +31,13 @@ if (mqttClient.connected()) {
 void serialDataSend () {
   JSONVar jsonReadings;
   
-  jsonReadings["node"] = mynodeNumber;
-  jsonReadings["angle"] = angle;
-  jsonReadings["doorUp"] = doorUp;
-  jsonReadings["doorDown"] = doorDown;
-  jsonReadings["hydration_on"] = hydration_on;
- // jsonReadings["watering_on_1"] = watering_on_1;
- // jsonReadings["watering_on_2"] = watering_on_2;
+  jsonReadings["nd"] = mynodeNumber;
+  jsonReadings["an"] = angle;
+  jsonReadings["Up"] = doorUp;
+  jsonReadings["Dwn"] = doorDown;
+  jsonReadings["h_on"] = hydration_on;
+  jsonReadings["w_1"] = watering_on_1;
+  jsonReadings["w_2"] = watering_on_2;
 
   String msg = JSON.stringify(jsonReadings);
   Serial.print("Send serialData =" );

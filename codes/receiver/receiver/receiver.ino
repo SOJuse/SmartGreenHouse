@@ -7,7 +7,7 @@
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
-#define   WIFI_CHANNEL    6
+#define   WIFI_CHANNEL    8
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
@@ -42,14 +42,13 @@ void receivedCallback( uint32_t from, String &msg ) {
   // Serial.printf(msg.c_str(), "\n");
   JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
   //записываем значения в переменные
-  angle = myObject["angle"];
-  doorUp = myObject["doorUp"];
-  doorDown = myObject["doorDown"];
-  hydration_on = myObject["hydration_on"];
-  watering_on_1 = myObject["watering_on_1"];
-  watering_on_2 = myObject["watering_on_2"];
-  int nodeNumber = myObject["node"];
-  Serial.print(watering_on_1);
+  angle = myObject["an"];
+  doorUp = myObject["Up"];
+  doorDown = myObject["Dwn"];
+  hydration_on = myObject["h_on"];
+  watering_on_1 = myObject["w_1"];
+  watering_on_2 = myObject["w_2"];
+  int nodeNumber = myObject["nd"];
   if (nodeNumber == 10) {
     Serial.printf(msg.c_str(), "\n");
   }

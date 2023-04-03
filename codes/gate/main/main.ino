@@ -11,13 +11,13 @@
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
-#define   STATION_SSID "iPhone (Grisha)"
-//#define   STATION_SSID "GDR"
-#define   STATION_PASSWORD "12345678"
-//#define   STATION_PASSWORD "chika16!"
+//#define   STATION_SSID "iPhone (Grisha)"
+#define   STATION_SSID "GDR"
+//#define   STATION_PASSWORD "12345678"
+#define   STATION_PASSWORD "chika16!"
 #define   STATION_PORT     5555
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    6
+#define   WIFI_CHANNEL    8
 
 const char* mqtt_server = "dev.rightech.io";
 const char* mqtt_username = "hihi23";

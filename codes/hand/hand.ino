@@ -110,10 +110,8 @@ void loop()
     while (Serial.available() > 0) { 
     // пока идут данные
       strData += (char)Serial.read();           // получаем данные
-      delay(10);    // обязательно задержка, иначе вылетим из цикла раньше времени
-    Serial.print('strData=');
-    Serial.println(strData);
-    }
+      delay(2);    // обязательно задержка, иначе вылетим из цикла раньше времени
+      }
     recievedFlag = true;                        // поднять флаг что получили данные
   }
 
@@ -151,25 +149,25 @@ void loop()
     Serial.println("New data...");
     Serial.println(strData);
     JSONVar myObject = JSON.parse(strData);   //парсим полученные данные
-    angle = myObject["angle"];
-    doorUp = myObject["doorUp"];
-    doorDown = myObject["doorDown"];
-    hydration_on = myObject["hydration_on"];
-    watering_on_1 = myObject["watering_on_1"];
-    watering_on_2 = myObject["watering_on_2"];
+    angle = myObject["an"];
+    doorUp = myObject["Up"];
+    doorDown = myObject["Dwn"];
+    hydration_on = myObject["h_on"];
+    watering_on_1 = myObject["w_1"];
+    watering_on_2 = myObject["w_2"];
 
     recievedFlag = false; // данные приняты
     Serial.print("angle = ");
     Serial.println(angle);
-    Serial.print("doorUp = ");
+    Serial.print("dUp = ");
     Serial.println(doorUp);
-    Serial.print("doorDown = ");
+    Serial.print("dDown = ");
     Serial.println(doorDown);
-    Serial.print("hydration_on = ");
+    Serial.print("hyd_on = ");
     Serial.println(hydration_on);
-    Serial.print("watering_on_1 = ");
+    Serial.print("wat_on_1 = ");
     Serial.println(watering_on_1);
-    Serial.print("watering_on_2 = ");
+    Serial.print("wat_on_2 = ");
     Serial.println(watering_on_2);
   }
 
