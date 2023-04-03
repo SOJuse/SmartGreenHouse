@@ -8,7 +8,8 @@
 #define SERVO2_RIGHT 11
 #define CURRENT_SET 850
 #define mosPIN 4 //увлажнитель
-#define pompPIN1 9 //насос
+#define pompPIN1 8 //первая помпа
+#define pompPIN2 9 //вторая помпа
 
 // создаём объекты для управления сервоприводами
 Servo myservo1;
@@ -28,7 +29,11 @@ byte watering_on_1 = 0; //команда на полив первой помпы
 byte watering_on_2 = 0; //команда на полив второй помпы
 boolean st_up = false; // состояние форточки верх
 boolean hum_on = false; // состояние увлажнителя выкл
+boolean pomp1_on = false; // состояние первой помпы
+boolean pomp2_on = false; // состояние второй помпы
 unsigned long cur_time_hum = 0; //время работы увлажнителя
+unsigned long cur_time_pomp1 = 0; //время работы первой помпы
+unsigned long cur_time_pomp2 = 0; //время работы второй помпы
 
 
 void setup()
@@ -51,8 +56,8 @@ void setup()
 
 void window_move_up(int angle) {
   // поднимаем вверх
-//  Serial.println("Up!");
-//  Serial.println(angle);
+  //  Serial.println("Up!");
+  //  Serial.println(angle);
 
   for (byte i = 0; i <= angle; i++) {
     myservo1.write(0 + i);
@@ -61,35 +66,35 @@ void window_move_up(int angle) {
     //  if (current_mA > CURRENT_SET){ // ПЕРЕГРУЗКА!
     //    break;
     // }
- //   Serial.print("i="); Serial.println(i);
- //   Serial.print("cur="); Serial.println(current_mA);
+    //   Serial.print("i="); Serial.println(i);
+    //   Serial.print("cur="); Serial.println(current_mA);
     delay(50);
   }
 }
 
 void window_move_down(int angle) {
   // опускаем вниз
-//  Serial.println("Down!");
-//  Serial.println(angle);
+  //  Serial.println("Down!");
+  //  Serial.println(angle);
 
   for (byte i = 0; i <= angle; i++) {
     myservo1.write(angle - i);
     myservo2.write(180 - angle + i);
- //   Serial.print("i="); Serial.println(i);
+    //   Serial.print("i="); Serial.println(i);
     delay(50);
   }
 
 }
 
 //void on_timer() {
-  //digitalWrite(mosPIN, 0); // включить увлажнитель
- // MsTimer2::stop();
+//digitalWrite(mosPIN, 0); // включить увлажнитель
+// MsTimer2::stop();
 //}
 /*
-void on_timer_poliv() {
+  void on_timer_poliv() {
   digitalWrite(pompPIN1, 0); // включить увлажнитель
   MsTimer2::stop();
-}
+  }
 */
 
 void loop()
@@ -103,85 +108,115 @@ void loop()
     }
     recievedFlag = true;                        // поднять флаг что получили данные
   }
-  
-  
-/*  if (recievedFlag) {                           // если есть принятые данные
-    if (strData.startsWith("up")) {              // разбор строки
-      start_up = true;
-      Serial.println("up");
-      Serial.println(start_up);
-    }
-    else if (strData.startsWith("down")) {              //
-      start_down = true;
-    }
-    else if (strData.startsWith("on")) {              //
-      digitalWrite(mosPIN, 1);
-      MsTimer2::start();
 
-    }
-    else if (strData.startsWith("off")) {              //
-      digitalWrite(mosPIN, 0); // выключить увлажнитель
-    }
 
-    else if (strData.startsWith("poliv")) {              //
-      digitalWrite(pompPIN1, 1); // включить насос
-      MsTimer2::start();
+  /*  if (recievedFlag) {                           // если есть принятые данные
+      if (strData.startsWith("up")) {              // разбор строки
+        start_up = true;
+        Serial.println("up");
+        Serial.println(start_up);
+      }
+      else if (strData.startsWith("down")) {              //
+        start_down = true;
+      }
+      else if (strData.startsWith("on")) {              //
+        digitalWrite(mosPIN, 1);
+        MsTimer2::start();
 
-    }
-    else {
-      angle = strData.toInt();
-    }
-    recievedFlag = false;                       // данные приняты!
-  }*/
+      }
+      else if (strData.startsWith("off")) {              //
+        digitalWrite(mosPIN, 0); // выключить увлажнитель
+      }
 
-if (recievedFlag) {
- Serial.println("New data...");
- Serial.println(strData);
- JSONVar myObject = JSON.parse(strData);   //парсим полученные данные
- angle = myObject["angle"];
- doorUp = myObject["doorUp"];
- doorDown = myObject["doorDown"];
- hydration_on = myObject["hydration_on"];
- watering_on_1 = myObject["watering_on_1"];
- watering_on_2 = myObject["watering_on_2"];
- 
- recievedFlag = false; // данные приняты
- Serial.print("angle = ");
- Serial.println(angle);
- Serial.print("doorUp = ");
- Serial.println(doorUp);
- Serial.print("doorDown = ");
- Serial.println(doorDown);
- Serial.print("hydration_on = ");
- Serial.println(hydration_on);
- Serial.print("watering_on_1 = ");
- Serial.println(watering_on_1);
- Serial.print("watering_on_2 = ");
- Serial.println(watering_on_2);
-}
+      else if (strData.startsWith("poliv")) {              //
+        digitalWrite(pompPIN1, 1); // включить насос
+        MsTimer2::start();
 
-//управлене форточкой
-if (doorUp == 1 && st_up == false) {
-  window_move_up(angle);
-  st_up = true;
-}
+      }
+      else {
+        angle = strData.toInt();
+      }
+      recievedFlag = false;                       // данные приняты!
+    }*/
 
-if (doorDown == 1 && st_up == true) {
-  window_move_down(angle);
-  st_up = false;
-}
+  if (recievedFlag) {
+    Serial.println("New data...");
+    Serial.println(strData);
+    JSONVar myObject = JSON.parse(strData);   //парсим полученные данные
+    angle = myObject["angle"];
+    doorUp = myObject["doorUp"];
+    doorDown = myObject["doorDown"];
+    hydration_on = myObject["hydration_on"];
+    watering_on_1 = myObject["watering_on_1"];
+    watering_on_2 = myObject["watering_on_2"];
 
-// управление увлажнителем
-if (hydration_on == 1 && hum_on == false) {
-  digitalWrite(mosPIN, 1);
-  cur_time_hum = millis();
-  hum_on = true;
-  Serial.println ("hydration on!");
-} 
+    recievedFlag = false; // данные приняты
+    Serial.print("angle = ");
+    Serial.println(angle);
+    Serial.print("doorUp = ");
+    Serial.println(doorUp);
+    Serial.print("doorDown = ");
+    Serial.println(doorDown);
+    Serial.print("hydration_on = ");
+    Serial.println(hydration_on);
+    Serial.print("watering_on_1 = ");
+    Serial.println(watering_on_1);
+    Serial.print("watering_on_2 = ");
+    Serial.println(watering_on_2);
+  }
 
-if (hum_on && millis() - cur_time_hum >= 10000) {
-  digitalWrite(mosPIN, 0);
-  hum_on = false;
-  Serial.println ("hydration off!");
-}
+  //управлене форточкой
+  if (doorUp == 1 && st_up == false) {
+    window_move_up(angle);
+    st_up = true;
+  }
+
+  if (doorDown == 1 && st_up == true) {
+    window_move_down(angle);
+    st_up = false;
+  }
+
+  // управление увлажнителем
+  if (hydration_on == 1 && hum_on == false) {
+    digitalWrite(mosPIN, 1);
+    cur_time_hum = millis();
+    hum_on = true;
+    Serial.println ("hydration on!");
+  }
+
+  if (hum_on && millis() - cur_time_hum >= 10000) {
+    digitalWrite(mosPIN, 0);
+    hum_on = false;
+    Serial.println ("hydration off!");
+  }
+
+  // управление поливом
+
+  //управление первой помпой
+  if (watering_on_1 == 1 && pomp1_on == false) {
+    digitalWrite(pompPIN1, 1);
+    cur_time_pomp1 = millis();
+    pomp1_on = true;
+    Serial.println ("pomp1 on!");
+  }
+
+  if (pomp1_on && millis() - cur_time_pomp1 >= 10000) {
+    digitalWrite(pompPIN1, 0);
+    pomp1_on = false;
+    Serial.println ("pomp1 off!");
+  }
+
+  //управление второй помпой
+  if (watering_on_2 == 1 && pomp2_on == false) {
+    digitalWrite(pompPIN2, 1);
+    cur_time_pomp2 = millis();
+    pomp2_on = true;
+    Serial.println ("pomp2 on!");
+  }
+
+  if (pomp2_on && millis() - cur_time_pomp2 >= 10000) {
+    digitalWrite(pompPIN2, 0);
+    pomp2_on = false;
+    Serial.println ("pomp2 off!");
+  }
 }

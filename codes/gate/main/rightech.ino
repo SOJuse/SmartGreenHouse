@@ -36,8 +36,9 @@ void serialDataSend () {
   jsonReadings["doorUp"] = doorUp;
   jsonReadings["doorDown"] = doorDown;
   jsonReadings["hydration_on"] = hydration_on;
-    //добавляем команды на полив
-  
+  jsonReadings["watering_on_1"] = watering_on_1;
+  jsonReadings["watering_on_2"] = watering_on_2;
+
   String msg = JSON.stringify(jsonReadings);
   Serial.print("Send serialData =" );
   Serial.printf(msg.c_str(), "\n");
