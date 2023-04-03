@@ -8,7 +8,7 @@
 #define SERVO2_RIGHT 11
 #define CURRENT_SET 850
 #define mosPIN 4 //увлажнитель
-#define pompPIN1 8 //первая помпа
+#define pompPIN1 5 //первая помпа
 #define pompPIN2 9 //вторая помпа
 
 // создаём объекты для управления сервоприводами
@@ -46,6 +46,11 @@ void setup()
   // увлажнитель
   pinMode(mosPIN, OUTPUT);
   digitalWrite(mosPIN, 0);
+  // полив
+  pinMode(pompPIN1, OUTPUT);
+  digitalWrite(pompPIN1, 0);
+  pinMode(pompPIN2, OUTPUT);
+  digitalWrite(pompPIN2, 0);
   delay(1000);
   Serial.begin(115200); // подключаем монитор порта
 
@@ -102,9 +107,12 @@ void loop()
 
   if (Serial.available() > 0) {                 // если есть что-то на вход
     strData = "";                               // очистить строку
-    while (Serial.available() > 0) {            // пока идут данные
+    while (Serial.available() > 0) { 
+    // пока идут данные
       strData += (char)Serial.read();           // получаем данные
-      delay(2);                                 // обязательно задержка, иначе вылетим из цикла раньше времени
+      delay(10);    // обязательно задержка, иначе вылетим из цикла раньше времени
+    Serial.print('strData=');
+    Serial.println(strData);
     }
     recievedFlag = true;                        // поднять флаг что получили данные
   }

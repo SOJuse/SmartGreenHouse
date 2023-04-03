@@ -141,40 +141,44 @@ void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
   if (myObject.hasOwnProperty("watering_on_2")) { // если передается команда на полив второй помпы
     watering_on_2 = myObject["watering_on_2"];
   }
+}
 
-  IPAddress getlocalIP() {
-    return IPAddress(mesh.getStationIP());
-  }
+IPAddress getlocalIP() {
+  return IPAddress(mesh.getStationIP());
+}
 
-  void autoControl() {
+void autoControl() {
+    
     //управление влажностью
     if (hum < set_hydration) {
-      hydration_on = 1;
+    hydration_on = 1;
     }
     else {
-      hydration_on = 0;
+    hydration_on = 0;
     }
+    /*
     //управление форточкой
     if (temp > set_temperature) {
-      doorUp = 1;
-      doorDown = 0;
+    doorUp = 1;
+    doorDown = 0;
     }
     else {
-      doorUp = 0;
-      doorDown = 1;
+    doorUp = 0;
+    doorDown = 1;
     }
     //управление поливом
     if (ghum1 < 1) {
-      watering_on_1 = 1;
+    watering_on_1 = 1;
     }
     else {
-      watering_on_1 = 0;
+    watering_on_1 = 0;
     }
 
     if (ghum2 < 1) {
-      watering_on_2 = 1;
+    watering_on_2 = 1;
     }
     else {
-      watering_on_2 = 0;
+    watering_on_2 = 0;
     }
-  }
+  */
+}
