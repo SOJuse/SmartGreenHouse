@@ -8,14 +8,21 @@
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
 #define   WIFI_CHANNEL    8
+#define   COUNTER_LIM    6 // предел счетчика
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
-//void sendMessage() ;   //задаем пустышку для корректной работы task
-//Task taskSendMessage( TASK_SECOND * 2 , TASK_FOREVER, &sendMessage );   //указываем задание
-int nodeNumber; //указываем номер ардуинки
+void countConnection() ;   //задаем пустышку для корректной работы countConnection
+Task taskcountConnection( TASK_SECOND * 5 , TASK_FOREVER, &countConnection );   //указываем задание
+void blinker() ;   //задаем пустышку для корректной работы blinker
+Task taskblinker( TASK_SECOND * 1 , TASK_FOREVER, &countConnection );   //указываем задание
+
+int nodeNumber; // номер ардуинки
 int angle; //угол подъема
 byte doorUp, doorDown, hydration_on, watering_on_1, watering_on_2;
+byte counter_10 = COUNTER_LIM; // счетчики для проверки связи с платами 10,1 и 2
+byte counter_1 = COUNTER_LIM;
+byte counter_2 = COUNTER_LIM;
 
 
 void setup() {
@@ -29,9 +36,13 @@ void setup() {
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
 
-  // userScheduler.addTask(taskSendMessage);   //добавляем задание в обработчик
-  // taskSendMessage.enable();   //включаем задание
-
+  userScheduler.addTask(taskcountConnection);   //добавляем задание в обработчик
+  taskcountConnection.enable();   //включаем задание
+  userScheduler.addTask(taskblinker);   //добавляем задание в обработчик
+  taskblinker.enable();   //включаем задание
+  
+  pinMode(BUILTIN_LED, OUTPUT); // индикатор подключения
+  digitalWrite(BUILTIN_LED, LOW); // включаем led
 }
 
 void loop() {
@@ -41,6 +52,27 @@ void loop() {
 void receivedCallback( uint32_t from, String &msg ) {
   // Serial.printf(msg.c_str(), "\n");
   JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
+  nodeNumber = myObject["nd"];
+    // если есть сообщение от платы, прибавляем её счетчик
+    switch (nodeNumber) {
+      case 1:
+      if (counter_1 < COUNTER_LIM){
+      counter_1 = counter_1 + 2;
+      }
+      break;
+      case 2:
+      if (counter_2 < COUNTER_LIM){
+      counter_2 = counter_2 + 2;
+      }
+      break;
+      case 10:
+      if (counter_10 < COUNTER_LIM){
+      counter_10 = counter_10 + 2;
+      }
+      break;
+    }
+  
+  if (counter_10 > 0 && nodeNumber == 10){ // если шлюз передает, берем команды от него
   //записываем значения в переменные
   angle = myObject["an"];
   doorUp = myObject["Up"];
@@ -48,13 +80,57 @@ void receivedCallback( uint32_t from, String &msg ) {
   hydration_on = myObject["h_on"];
   watering_on_1 = myObject["w_1"];
   watering_on_2 = myObject["w_2"];
-  int nodeNumber = myObject["nd"];
-  if (nodeNumber == 10) {
-    Serial.printf(msg.c_str(), "\n");
+  nodeNumber = myObject["nd"];
+  Serial.printf(msg.c_str(), "\n");
   }
 
+ if (counter_1 > 0 && nodeNumber == 1 && counter_10 == 0){ // если шлюз не передает, берем команды от 1й платы
+  //записываем значения в переменные
+  angle = myObject["an"];
+  doorUp = myObject["Up"];
+  doorDown = myObject["Dwn"];
+  hydration_on = myObject["h_on"];
+  watering_on_1 = myObject["w_1"];
+  watering_on_2 = myObject["w_2"];
+  nodeNumber = myObject["nd"];
+  Serial.printf(msg.c_str(), "\n");
+  }
+
+ if (counter_2 > 0 && nodeNumber == 2 && counter_10 == 0 && counter_1 == 0){
+  // если шлюз не передает, и 1я не передает, берем команды от 2й платы
+  //записываем значения в переменные
+  angle = myObject["an"];
+  doorUp = myObject["Up"];
+  doorDown = myObject["Dwn"];
+  hydration_on = myObject["h_on"];
+  watering_on_1 = myObject["w_1"];
+  watering_on_2 = myObject["w_2"];
+  nodeNumber = myObject["nd"];
+  Serial.printf(msg.c_str(), "\n");
+  }
 }
 
 void newConnectionCallback(uint32_t nodeId) {
   //  Serial.printf("New Connection, nodeId = %u\n", nodeId);
+}
+
+void countConnection(){
+  // убывающий счетчик  сообщений от плат 10, 1 и 2
+  if (counter_10 > 0) {
+    counter_10--;
+  }
+   if (counter_1 > 0) {
+    counter_1--;
+  }
+   if (counter_2 > 0) {
+    counter_2--;
+  }
+}
+
+void taskblinker(){
+// индикатор работы передачи команд
+if (counter_10 > 0) {
+  digitalWrite(BUILTIN_LED, HIGH); // выключаем led
+}
+  
 }
