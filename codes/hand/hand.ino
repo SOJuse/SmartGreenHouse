@@ -45,10 +45,10 @@ void setup()
   myservo2.write(180);
   // увлажнитель
   pinMode(mosPIN, OUTPUT);
-  digitalWrite(mosPIN, 0);
+  digitalWrite(mosPIN, 1);
   // полив
   pinMode(pompPIN1, OUTPUT);
-  digitalWrite(pompPIN1, 0);
+  digitalWrite(pompPIN1, 1);
   pinMode(pompPIN2, OUTPUT);
   digitalWrite(pompPIN2, 0);
   delay(1000);
@@ -184,14 +184,14 @@ void loop()
 
   // управление увлажнителем
   if (hydration_on == 1 && hum_on == false) {
-    digitalWrite(mosPIN, 1);
+    digitalWrite(mosPIN, 0);
     cur_time_hum = millis();
     hum_on = true;
     Serial.println ("hydration on!");
   }
 
   if (hum_on && millis() - cur_time_hum >= 10000) {
-    digitalWrite(mosPIN, 0);
+    digitalWrite(mosPIN, 1);
     hum_on = false;
     Serial.println ("hydration off!");
   }
@@ -200,14 +200,14 @@ void loop()
 
   //управление первой помпой
   if (watering_on_1 == 1 && pomp1_on == false) {
-    digitalWrite(pompPIN1, 1);
+    digitalWrite(pompPIN1, 0);
     cur_time_pomp1 = millis();
     pomp1_on = true;
     Serial.println ("pomp1 on!");
   }
 
   if (pomp1_on && millis() - cur_time_pomp1 >= 10000) {
-    digitalWrite(pompPIN1, 0);
+    digitalWrite(pompPIN1, 1);
     pomp1_on = false;
     Serial.println ("pomp1 off!");
   }
