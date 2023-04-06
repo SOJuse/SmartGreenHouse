@@ -15,15 +15,15 @@ painlessMesh  mesh;   //обозначаем нашу библиотеку ка�
 void countConnection() ;   //задаем пустышку для корректной работы countConnection
 Task taskcountConnection( TASK_SECOND * 5 , TASK_FOREVER, &countConnection );   //указываем задание
 void blinker() ;   //задаем пустышку для корректной работы blinker
-Task taskblinker( TASK_SECOND * 1 , TASK_FOREVER, &countConnection );   //указываем задание
+Task taskblinker( TASK_SECOND * 1 , TASK_FOREVER, &blinker );   //указываем задание
 
 int nodeNumber; // номер ардуинки
 int angle; //угол подъема
 byte doorUp, doorDown, hydration_on, watering_on_1, watering_on_2;
-byte counter_10 = COUNTER_LIM; // счетчики для проверки связи с платами 10,1 и 2
-byte counter_1 = COUNTER_LIM;
-byte counter_2 = COUNTER_LIM;
-
+byte counter_10 = 0; // счетчики для проверки связи с платами 10,1 и 2
+byte counter_1 = 0;
+byte counter_2 = 0;
+boolean led = true;
 
 void setup() {
 
@@ -52,6 +52,8 @@ void loop() {
 void receivedCallback( uint32_t from, String &msg ) {
   // Serial.printf(msg.c_str(), "\n");
   JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
+  JSONVar jsonSend;
+  
   nodeNumber = myObject["nd"];
     // если есть сообщение от платы, прибавляем её счетчик
     switch (nodeNumber) {
@@ -86,27 +88,41 @@ void receivedCallback( uint32_t from, String &msg ) {
 
  if (counter_1 > 0 && nodeNumber == 1 && counter_10 == 0){ // если шлюз не передает, берем команды от 1й платы
   //записываем значения в переменные
+  jsonSend["nd"] = 1;
   angle = myObject["an"];
+  jsonSend["an"] = angle;
   doorUp = myObject["Up"];
+  jsonSend["Up"] = doorUp;
   doorDown = myObject["Dwn"];
+  jsonSend["Dwn"] = doorDown;
   hydration_on = myObject["h_on"];
+  jsonSend["h_on"] = hydration_on;
   watering_on_1 = myObject["w_1"];
+  jsonSend["w_1"] = watering_on_1;
   watering_on_2 = myObject["w_2"];
-  nodeNumber = myObject["nd"];
-  Serial.printf(msg.c_str(), "\n");
+  jsonSend["w_2"] = watering_on_2;
+  String msg_to_r = JSON.stringify(jsonSend);
+  Serial.printf(msg_to_r.c_str(), "\n");
   }
 
  if (counter_2 > 0 && nodeNumber == 2 && counter_10 == 0 && counter_1 == 0){
   // если шлюз не передает, и 1я не передает, берем команды от 2й платы
   //записываем значения в переменные
+  jsonSend["nd"] = 2;
   angle = myObject["an"];
+  jsonSend["an"] = angle;
   doorUp = myObject["Up"];
+  jsonSend["Up"] = doorUp;
   doorDown = myObject["Dwn"];
+  jsonSend["Dwn"] = doorDown;
   hydration_on = myObject["h_on"];
+  jsonSend["h_on"] = hydration_on;
   watering_on_1 = myObject["w_1"];
+  jsonSend["w_1"] = watering_on_1;
   watering_on_2 = myObject["w_2"];
-  nodeNumber = myObject["nd"];
-  Serial.printf(msg.c_str(), "\n");
+  jsonSend["w_2"] = watering_on_2;
+  String msg_to_r = JSON.stringify(jsonSend);
+  Serial.printf(msg_to_r.c_str(), "\n");
   }
 }
 
@@ -125,12 +141,16 @@ void countConnection(){
    if (counter_2 > 0) {
     counter_2--;
   }
+
+/*  Serial.print("counter_10="); Serial.println(counter_10);
+  Serial.print("counter_1="); Serial.println(counter_1);
+  Serial.print("counter_2="); Serial.println(counter_2);*/
 }
 
-void taskblinker(){
+void blinker(){
 // индикатор работы передачи команд
 if (counter_10 > 0) {
-  digitalWrite(BUILTIN_LED, HIGH); // выключаем led
+  digitalWrite(BUILTIN_LED, !led); // выключаем led
 }
   
 }

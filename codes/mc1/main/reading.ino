@@ -8,12 +8,26 @@ String getReadings () {
    jsonReadings["temp"] = 24.35;
    jsonReadings["hum"] = 45;
    jsonReadings["ghum"] = readSensor();
+   jsonReadings["nd"] = 1;
+   jsonReadings["an"] = 30;
+   jsonReadings["Up"] = 0;
+   jsonReadings["Dwn"] = 1;
+   jsonReadings["h_on"] = 0;
+   jsonReadings["w_1"] = 0;
+   jsonReadings["w_2"] = 0;
   #else
   sensors_event_t humidity, temp;
   aht.getEvent(&humidity, &temp);
   jsonReadings["temp"] = temp.temperature;
   jsonReadings["hum"] = humidity.relative_humidity;
   jsonReadings["ghum"] = readSensor();
+  jsonReadings["nd"] = nodeNumber;
+  jsonReadings["an"] = angle;
+  jsonReadings["Up"] = doorUp;
+  jsonReadings["Dwn"] = doorDown;
+  jsonReadings["h_on"] = hydration_on;
+  jsonReadings["w_1"] = watering_on_1;
+  jsonReadings["w_2"] = watering_on_2;
   #endif
   return JSON.stringify(jsonReadings);
 }
