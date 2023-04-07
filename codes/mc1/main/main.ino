@@ -6,7 +6,7 @@
 #include <Adafruit_AHTX0.h>
 
 #define NOSENSORS 0 // тестовые данные без датчиков задать 1
-#define   WIFI_CHANNEL    8
+#define   WIFI_CHANNEL    6
 
 //*********ПЕРЕМЕННЫЕ*********
 

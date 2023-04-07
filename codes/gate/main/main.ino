@@ -11,13 +11,13 @@
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт 
-//#define   STATION_SSID "iPhone (Grisha)"
-#define   STATION_SSID "GDR"
-//#define   STATION_PASSWORD "12345678"
-#define   STATION_PASSWORD "chika16!"
+#define   STATION_SSID "iPhone (Grisha)"
+//#define   STATION_SSID "GDR"
+#define   STATION_PASSWORD "12345678"
+//#define   STATION_PASSWORD "chika16!"
 #define   STATION_PORT     5555
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    8
+#define   WIFI_CHANNEL    6
 
 const char* mqtt_server = "dev.rightech.io";
 const char* mqtt_username = "hihi23";
@@ -37,15 +37,21 @@ Task taskAutoControl( TASK_SECOND * 5 , TASK_FOREVER, &autoControl );   //ука
 int nodeNumber;
 byte mynodeNumber = 10; //указываем номер узла для шлюза
 int angle = 30; //угол подъема по умолчанию
-int set_hydration = 30; //уставка влажности по умолчанию
+int set_hydration = 0; //уставка влажности по умолчанию
 int set_temperature = 30; //уставка температуры по умолчанию
+int set_gh = 1; //уставка влажности почвы по умолчанию
 double water;
 double temp = 15; //начальная температура, чтобы не было сработки
 double temp1, temp2;
 double hum = 50; //начальная влажность, чтобы не было сработки
 double hum1, hum2;
-byte ghum1, ghum2, doorUp, doorDown, hydration_on, watering_on_1, watering_on_2;
+byte ghum1 = 1; //начальная влажность почвы, чтобы не было сработки
+byte ghum2 = 1;
+byte doorUp, doorDown, hydration_on, watering_on_1, watering_on_2;
 String s_ghum1, s_ghum2;
+long int hum_time; //время, в которое запускается увлжанитель
+long int hum_time_2; //время, в которое отключаем увлжанитель
+bool hum_flag = 1; //флаг, отвечающий за активность увлажнителя
 IPAddress getlocalIP();
 
 IPAddress myIP(0, 0, 0, 0);
@@ -134,12 +140,20 @@ void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
     set_hydration = myObject["set_hydration"];
   }
 
+  if (myObject.hasOwnProperty("set_temperature")) { // если передается уставка на температуру
+    set_temperature = myObject["set_temperature"];
+  }
+
   if (myObject.hasOwnProperty("watering_on_1")) { // если передается команда на полив первой помпы
     watering_on_1 = myObject["watering_on_1"];
   }
 
   if (myObject.hasOwnProperty("watering_on_2")) { // если передается команда на полив второй помпы
     watering_on_2 = myObject["watering_on_2"];
+  }
+
+  if (myObject.hasOwnProperty("set_gh")) { // если передается уставка на влажность почвы
+    set_gh = myObject["set_gh"];
   }
 }
 
@@ -148,37 +162,45 @@ IPAddress getlocalIP() {
 }
 
 void autoControl() {
-    
-    //управление влажностью
-    if (hum < set_hydration) {
+
+  //управление влажностью
+  if (hum < set_hydration and hydration_on == 0 and hum_flag == 1) {
     hydration_on = 1;
+    hum_time = millis();
+  }
+  else if (hydration_on == 1) {
+    if (millis() - hum_time >= 10000) {
+      hydration_on = 0;
+      hum_time_2 = millis();
+      hum_flag = 0;
     }
-    else {
-    hydration_on = 0;
+  }
+  if (hum_flag == 0) {
+    if (millis() - hum_time_2 >= 3000) {
+      hum_flag = 1;
     }
-    /*
-    //управление форточкой
-    if (temp > set_temperature) {
+  }
+  //управление форточкой
+
+  if (temp > set_temperature) {
     doorUp = 1;
     doorDown = 0;
-    }
-    else {
+  } else {
     doorUp = 0;
     doorDown = 1;
-    }
-    //управление поливом
-    if (ghum1 < 1) {
-    watering_on_1 = 1;
-    }
-    else {
-    watering_on_1 = 0;
-    }
+  }
 
-    if (ghum2 < 1) {
+  //управление поливом
+  if (ghum1 < set_gh) {
+    watering_on_1 = 1;
+  } else {
+    watering_on_1 = 0;
+  }
+
+  if (ghum2 < set_gh) {
     watering_on_2 = 1;
-    }
-    else {
+  } else {
     watering_on_2 = 0;
-    }
-  */
+  }
+
 }

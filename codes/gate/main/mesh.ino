@@ -37,12 +37,16 @@ void receivedCallback( uint32_t from, String &msg ) {
   Serial.println(temp2);
   Serial.print("Tavg=");
   Serial.println(temp);
+  Serial.print("set_temperature=");
+  Serial.println(set_temperature);
   Serial.print("h1=");
   Serial.println(hum1);
   Serial.print("h2=");
   Serial.println(hum2);
   Serial.print("havg=");
   Serial.println(hum);
+  Serial.print("water=");
+  Serial.println(water);
   Serial.println("***********************");
 
 }

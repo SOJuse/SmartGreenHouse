@@ -10,6 +10,7 @@
 #define mosPIN 4 //увлажнитель
 #define pompPIN1 5 //первая помпа
 #define pompPIN2 9 //вторая помпа
+#define coolerPIN 13 //кулер
 
 // создаём объекты для управления сервоприводами
 Servo myservo1;
@@ -34,6 +35,7 @@ boolean pomp2_on = false; // состояние второй помпы
 unsigned long cur_time_hum = 0; //время работы увлажнителя
 unsigned long cur_time_pomp1 = 0; //время работы первой помпы
 unsigned long cur_time_pomp2 = 0; //время работы второй помпы
+boolean led_on = false; // состояние второй помпы
 
 
 void setup()
@@ -48,9 +50,11 @@ void setup()
   digitalWrite(mosPIN, 1);
   // полив
   pinMode(pompPIN1, OUTPUT);
-  digitalWrite(pompPIN1, 1);
+  digitalWrite(pompPIN1, 0);
   pinMode(pompPIN2, OUTPUT);
   digitalWrite(pompPIN2, 0);
+  pinMode(coolerPIN, OUTPUT);
+  digitalWrite(coolerPIN, 0);
   delay(1000);
   Serial.begin(115200); // подключаем монитор порта
 
@@ -107,11 +111,11 @@ void loop()
 
   if (Serial.available() > 0) {                 // если есть что-то на вход
     strData = "";                               // очистить строку
-    while (Serial.available() > 0) { 
-    // пока идут данные
+    while (Serial.available() > 0) {
+      // пока идут данные
       strData += (char)Serial.read();           // получаем данные
       delay(2);    // обязательно задержка, иначе вылетим из цикла раньше времени
-      }
+    }
     recievedFlag = true;                        // поднять флаг что получили данные
   }
 
@@ -155,6 +159,7 @@ void loop()
     hydration_on = myObject["h_on"];
     watering_on_1 = myObject["w_1"];
     watering_on_2 = myObject["w_2"];
+    led_on = 
 
     recievedFlag = false; // данные приняты
     Serial.print("angle = ");
@@ -169,6 +174,7 @@ void loop()
     Serial.println(watering_on_1);
     Serial.print("wat_on_2 = ");
     Serial.println(watering_on_2);
+    
   }
 
   //управлене форточкой
@@ -184,6 +190,7 @@ void loop()
 
   // управление увлажнителем
   if (hydration_on == 1 && hum_on == false) {
+    digitalWrite(coolerPIN, 1); // включение кулера
     digitalWrite(mosPIN, 0);
     cur_time_hum = millis();
     hum_on = true;
@@ -191,6 +198,7 @@ void loop()
   }
 
   if (hum_on && millis() - cur_time_hum >= 10000) {
+    digitalWrite(coolerPIN, 0); // выключение кулера
     digitalWrite(mosPIN, 1);
     hum_on = false;
     Serial.println ("hydration off!");
@@ -200,14 +208,14 @@ void loop()
 
   //управление первой помпой
   if (watering_on_1 == 1 && pomp1_on == false) {
-    digitalWrite(pompPIN1, 0);
+    digitalWrite(pompPIN1, 1);
     cur_time_pomp1 = millis();
     pomp1_on = true;
     Serial.println ("pomp1 on!");
   }
 
   if (pomp1_on && millis() - cur_time_pomp1 >= 10000) {
-    digitalWrite(pompPIN1, 1);
+    digitalWrite(pompPIN1, 0);
     pomp1_on = false;
     Serial.println ("pomp1 off!");
   }
