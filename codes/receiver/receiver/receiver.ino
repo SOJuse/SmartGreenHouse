@@ -7,7 +7,7 @@
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
 #define   MESH_PASSWORD   "teplitsa"   //пароль
 #define   MESH_PORT       5555   //порт по дефолту 5555
-#define   WIFI_CHANNEL    8
+#define   WIFI_CHANNEL    1
 #define   COUNTER_LIM    6 // предел счетчика
 
 Scheduler userScheduler;   // планировщик

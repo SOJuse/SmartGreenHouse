@@ -40,7 +40,7 @@ void autoControl() ;   //задаем прототип для автоматич
 Task taskAutoControl( TASK_SECOND * 5 , TASK_FOREVER, &autoControl );   //указываем задание
 int nodeNumber;
 byte mynodeNumber = 10; //указываем номер узла для шлюза
-int angle = 30; //угол подъема по умолчанию
+int angle = 42; //угол подъема по умолчанию
 int set_hydration = 0; //уставка влажности по умолчанию
 int set_temperature = 30; //уставка температуры по умолчанию
 int set_gh = 1; //уставка влажности почвы по умолчанию

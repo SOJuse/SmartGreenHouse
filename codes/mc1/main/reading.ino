@@ -18,16 +18,21 @@ String getReadings () {
   #else
   sensors_event_t humidity, temp;
   aht.getEvent(&humidity, &temp);
-  jsonReadings["temp"] = temp.temperature;
-  jsonReadings["hum"] = humidity.relative_humidity;
-  jsonReadings["ghum"] = readSensor();
+  temp1 = temp.temperature;
+  hum = humidity.relative_humidity;
+  jsonReadings["temp"] = temp1;
+  Serial.print("temp1=");
+  Serial.println(temp1);
+  jsonReadings["hum"] = hum;
+  ghum = readSensor();
+  jsonReadings["ghum"] = ghum;
   jsonReadings["nd"] = nodeNumber;
   jsonReadings["an"] = angle;
   jsonReadings["Up"] = doorUp;
   jsonReadings["Dwn"] = doorDown;
   jsonReadings["h_on"] = hydration_on;
   jsonReadings["w_1"] = watering_on_1;
-  jsonReadings["w_2"] = watering_on_2;
+  jsonReadings["w_2"] = 0;
   #endif
   return JSON.stringify(jsonReadings);
 }
@@ -46,5 +51,15 @@ int readSensor()
   if (val>850) ans=0;
   if (val>400 && val<850) ans=1;
   if (val<400) ans=2;
+    if (val<15){
+     digitalWrite(ledPin, HIGH); 
+     Serial.println("sensor fault!");
+     }
+    else
+     {
+     digitalWrite(ledPin, LOW); 
+     Serial.println("sensor good");
+     }
+  
   return ans;                       // Вернуть аналоговое значение влажности
 }

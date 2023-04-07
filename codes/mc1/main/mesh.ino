@@ -1,6 +1,7 @@
 void sendMessage() {
   String msg = getReadings();
   mesh.sendBroadcast( msg );
+  autoControl();
 }
 
 void receivedCallback( uint32_t from, String &msg ) {
