@@ -4,9 +4,16 @@
 String getReadings () {
   JSONVar jsonReadings;
   jsonReadings["node"] = nodeNumber;
-  jsonReadings["waterLevel"] = readSensor();
+  water_lvl = readSensor();
+  jsonReadings["waterLevel"] = water_lvl;
+
+   // включение светодиода при малом объеме воды
+  if (water_lvl < 100){
+    digitalWrite(ledPin, HIGH);
+  } else {
+     digitalWrite(ledPin, LOW);
+  }
   return JSON.stringify(jsonReadings);
- // jsonReadings["water-lvl"] = readSensor();
 }
 
 //----------------------------

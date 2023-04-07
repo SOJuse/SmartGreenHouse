@@ -51,10 +51,4 @@ void loop() {
   // она также запустит пользовательский планировщик
   mesh.update();
 
-  // включение светодиода при малом объеме воды
-  if (readSensor() < 100){
-    digitalWrite(ledPin, HIGH);
-  } else {
-     digitalWrite(ledPin, LOW);
-  }
-  }
+   }
