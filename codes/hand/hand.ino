@@ -71,12 +71,12 @@ void window_move_up(int angle) {
   for (byte i = 0; i <= angle; i++) {
     myservo1.write(0 + i);
     myservo2.write(180 - i);
-    // current_mA = ina219.getCurrent_mA();
+    current_mA = ina219.getCurrent_mA();
     //  if (current_mA > CURRENT_SET){ // ПЕРЕГРУЗКА!
     //    break;
     // }
-    //   Serial.print("i="); Serial.println(i);
-    //   Serial.print("cur="); Serial.println(current_mA);
+    Serial.print("i="); Serial.println(i);
+    Serial.print("cur="); Serial.println(current_mA);
     delay(50);
   }
 }

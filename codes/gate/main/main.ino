@@ -20,13 +20,14 @@
 #define   STATION_PORT     5555
 
 #define   HOSTNAME         "MQTT_Bridge"
-#define   WIFI_CHANNEL    6
+#define   WIFI_CHANNEL    1
 
 const char* mqtt_server = "dev.rightech.io";
 const char* mqtt_username = "hihi23";
 const char* mqtt_password = "hihi23";
 const char* clientID = "mqtt-greenhouse1103";
 
+byte autocmd = 0; //флаг автоматического управления
 
 Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
@@ -161,6 +162,10 @@ void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
   if (myObject.hasOwnProperty("set_gh")) { // если передается уставка на влажность почвы
     set_gh = myObject["set_gh"];
   }
+  if (myObject.hasOwnProperty("auto")) { // если передается авторежим
+    autocmd = myObject["auto"];
+  }
+
 }
 
 IPAddress getlocalIP() {
@@ -168,7 +173,7 @@ IPAddress getlocalIP() {
 }
 
 void autoControl() {
-
+ if (autocmd == 1){
   //управление влажностью
   if (hum < set_hydration and hydration_on == 0 and hum_flag == 1) {
     hydration_on = 1;
@@ -191,7 +196,8 @@ void autoControl() {
   if (temp > set_temperature) {
     doorUp = 1;
     doorDown = 0;
-  } else {
+  } 
+  else {
     doorUp = 0;
     doorDown = 1;
   }
@@ -208,5 +214,5 @@ void autoControl() {
   } else {
     watering_on_2 = 0;
   }
-
+ }
 }
