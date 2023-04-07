@@ -187,7 +187,7 @@ void loop()
 
   // управление увлажнителем
   if (hydration_on == 1 && hum_on == false) {
-    digitalWrite(coolerPIN, 0); // выключение кулера
+    digitalWrite(coolerPIN, 1); // включение кулера
     digitalWrite(mosPIN, 0);
     cur_time_hum = millis();
     hum_on = true;
@@ -195,7 +195,7 @@ void loop()
   }
 
   if (hum_on && millis() - cur_time_hum >= 10000) {
-    digitalWrite(coolerPIN, 1); // включение кулера
+    digitalWrite(coolerPIN, 0); // выключение кулера
     digitalWrite(mosPIN, 1);
     hum_on = false;
     Serial.println ("hydration off!");
