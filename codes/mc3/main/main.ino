@@ -13,6 +13,7 @@
 #define sensorPin A0
 #define ledPin 13
 
+
 //--------PAINLESSMESH--------
 
 #define   MESH_PREFIX     "teplitsa"   //логин нашей сети
@@ -25,6 +26,7 @@ void sendMessage() ;   //задаем пустышку для коректной
 
 Task taskSendMessage( TASK_SECOND * 5 , TASK_FOREVER, &sendMessage );   //указываем задание
 int nodeNumber = 3; //указываем номер ардуинки
+double water_lvl;
 
 //----------------------------
 

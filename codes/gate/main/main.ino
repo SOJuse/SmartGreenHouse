@@ -6,6 +6,8 @@
 #include "painlessMesh.h"
 #include <PubSubClient.h>
 
+#define sensorPin A0 //датчик уровня
+#define ledPin D13
 
 //--------PAINLESSMESH--------
 #define   MESH_PREFIX     "teplitsa"   //логин  сети
@@ -16,6 +18,7 @@
 #define   STATION_PASSWORD "12345678"
 //#define   STATION_PASSWORD "chika16!"
 #define   STATION_PORT     5555
+
 #define   HOSTNAME         "MQTT_Bridge"
 #define   WIFI_CHANNEL    6
 
@@ -40,7 +43,7 @@ int angle = 30; //угол подъема по умолчанию
 int set_hydration = 0; //уставка влажности по умолчанию
 int set_temperature = 30; //уставка температуры по умолчанию
 int set_gh = 1; //уставка влажности почвы по умолчанию
-double water;
+String water;
 double temp = 15; //начальная температура, чтобы не было сработки
 double temp1, temp2;
 double hum = 50; //начальная влажность, чтобы не было сработки
@@ -63,6 +66,9 @@ void setup() {
   pinMode(BUILTIN_LED, OUTPUT); // индикатор подключения к wifi
   digitalWrite(BUILTIN_LED, LOW); // включаем led до тех пор пока не подключимся к wifi
   Serial.begin(115200);
+
+  pinMode(sensorPin, INPUT);
+  pinMode(ledPin, OUTPUT);
   //--------------MESH--------------
 
   mesh.setDebugMsgTypes( ERROR | STARTUP | CONNECTION );  // установите перед функцией init() чтобы выдавались приветственные сообщения

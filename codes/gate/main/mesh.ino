@@ -1,5 +1,5 @@
 void receivedCallback( uint32_t from, String &msg ) {
-  
+
   JSONVar myObject = JSON.parse(msg.c_str());   //парсим полученные данные
   //записываем значения в переменные
   nodeNumber = myObject["node"];
@@ -20,8 +20,17 @@ void receivedCallback( uint32_t from, String &msg ) {
       if (ghum2 == 1) s_ghum2 = "Norm";
       if (ghum2 == 2) s_ghum2 = "Wet";
       break;
-    case 3:
-    water = myObject["waterLevel"];
+      //  case 3:
+      // water = myObject["waterLevel"];
+  }
+  double val1 = analogRead(sensorPin);
+  double water1 = 0.0069 * val1 - 0.4084;
+  if (water1 <= 1) {
+    digitalWrite(ledPin, HIGH);
+    water = "Few";
+  } else {
+    digitalWrite(ledPin, LOW);
+    water = "Norm";
   }
   temp = (temp1 + temp2) / 2;
   hum = (hum1 + hum2) / 2;
