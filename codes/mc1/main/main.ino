@@ -5,8 +5,8 @@
 #include <Arduino_JSON.h>
 #include <Adafruit_AHTX0.h>
 
-#define NOSENSORS 0 // тестовые данные без датчиков задать 1
-#define   WIFI_CHANNEL    1
+#define NOSENSORS 1 // тестовые данные без датчиков задать 1
+#define   WIFI_CHANNEL    8
 
 //*********ПЕРЕМЕННЫЕ*********
 
@@ -23,9 +23,18 @@ Scheduler userScheduler;   // планировщик
 painlessMesh  mesh;   //обозначаем нашу библиотеку как mesh (для удобства)
 void sendMessage() ;   //задаем пустышку для коректной работы task
 Task taskSendMessage( TASK_SECOND * 2 , TASK_FOREVER, &sendMessage );   //указываем задание
-int nodeNumber = 1; //указываем номер ардуинки
-
+byte nodeNumber = 1; //указываем номер ардуинки
 //----------------------------
+int angle = 30; //угол подъема по умолчанию
+int set_hydration = 30; //уставка влажности по умолчанию
+int set_temperature = 30; //уставка температуры по умолчанию
+//double water;
+double temp = 15; //начальная температура, чтобы не было сработки
+double temp1;
+double hum = 50; //начальная влажность, чтобы не было сработки
+double hum1;
+byte ghum1, doorUp, doorDown, hydration_on, watering_on_1, watering_on_2;
+//String s_ghum1, s_ghum2;
 
 void setup() {
 //  pinMode(sensorPower, OUTPUT);
